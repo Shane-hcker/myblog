@@ -39,7 +39,7 @@ def login() -> Any:
         # display info
         flask.flash(f'{login_form.username.data} logged in at {time.strftime("%Y-%m-%d %H:%M")}\t'
                     f'Remember: {login_form.remember.data}')
-        # flask.url_for() -> 防止如果未来路由发生改变全部东西都要改
+        # flask.url_for() -> prevent future route change
         # url_for refers to the func that covers the template
         return flask.redirect(flask.url_for('home'))  # redirect
 
