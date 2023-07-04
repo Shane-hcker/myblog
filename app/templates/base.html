@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  {% if route %}
+  <title>Shane's Blog - {{route}}</title>
+  {% else %}
+  <title>Shane's Blog - Somewhere</title>
+  {% endif %}
+  <style>
+      * {
+          padding: 0;
+          margin: 0;
+      }
+    .welcome {
+        font-weight: bold;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        margin-left: 10px;
+    }
+
+    .nav {
+        height: 25px;
+        margin-left: 10px;
+        margin-top: 10px;
+    }
+    .tabs a {
+        text-decoration: none;
+        text-align: center;
+        color: white;
+    }
+
+    /*.tabs a:hover {*/
+    /*    font-weight: bold;*/
+    /*}*/
+
+    .home, .login {
+        width: 400px;
+        height: 125px;
+        padding: 5px 5px 5px 5px;
+        border-radius: 5px;
+        background-color: dodgerblue;
+        margin-right: 10px;
+    }
+    /* Login Forms */
+    form {
+        margin-left: 10px;
+    }
+
+    form .text {
+        width: 300px;
+    }
+
+    form .error {
+        color: red;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 10px;
+    }
+
+    .post {
+        margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <span class="home tabs">
+<!--      -->
+      <a href="{{url_for('home')}}">
+        Home
+      </a>
+    </span>
+
+    <span class="login tabs">
+      <a href="{{url_for('login')}}">
+        Login
+      </a>
+    </span>
+  </header>
+
+  <div class="welcome">
+    <h1>Shane's Blog</h1>
+    <h2>Very good...</h2>
+    <h3>it's {{curr_time}} now...</h3>
+    <hr>
+  </div>
+  
+    {% block content %}{% endblock %}
+</body>
+</html>

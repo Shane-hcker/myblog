@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form action='' method='post' novalidate>
+  <!-- mandatory for forms -->
+  {{loginform.hidden_tag()}}
+  <div>
+    {{ loginform.email.label }} <br>
+    {{ loginform.email(placeholder="example@example.com", class='text') }}
+    <!-- error output when sth is not valid -->
+    {% for error in loginform.email.errors %}
+      <br>
+      <span class="error">[{{error}}]</span>
+    {% endfor %}
+  </div>
+  <div>
+    {{ loginform.username.label }} <br>
+    {{ loginform.username(placeholder="Username...", class='text') }}
+
+    {% for error in loginform.username.errors %}
+      <br>
+      <span class="error">[{{error}}]</span>
+    {% endfor %}
+  </div>
+  <div>
+    {{ loginform.password.label }} <br>
+    {{ loginform.password(placeholder='Password...', class='text') }}
+
+    {% for error in loginform.password.errors %}
+      <br>
+      <span class="error">[{{error}}]</span>
+    {% endfor %}
+  </div>
+  <div>
+    {{ loginform.remember() }}
+    {{ loginform.remember.label }}
+  </div>
+  {{ loginform.login() }}
+</form>
+{% endblock %}

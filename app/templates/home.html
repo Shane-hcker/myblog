@@ -1,27 +1,25 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Shane's Blog - {{route}}</title>
-  <style>
-    * {
-        padding: 0;
-        margin: 0;
-    }
-    .welcome {
-        font-weight: bold;
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        text-align: center;
-    }
-  </style>
-</head>
-<body>
-  <div class="welcome">
-    <h1>Welcome to Shane's Blog site, {{user.username}}</h1>
-    <h2>Very good...</h2>
-    <h3>it's {{curr_time}} now...</h3>
-  </div>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+  <!-- getting flask.flash() messages -->
+  <!-- within blocks like this, var assign should follow by a `with` -->
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul>
+      {% for msg in messages %}
+      <li>[{{msg}}]</li>
+      {% endfor %}
+    </ul>
+    <hr>
+  {% endif %}
+  {% endwith %}
+
+  {% for post in posts %}
+    <div class="post">
+      <p>
+        <b>{{post.author}}</b> at
+        <i>{{post.date}}</i>: {{post.content}}
+      </p>
+    </div>
+  {% endfor %}
+{% endblock %}
