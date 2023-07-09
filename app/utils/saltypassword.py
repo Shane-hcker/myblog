@@ -3,6 +3,11 @@ from typing import *
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
+__all__ = ['SaltyPassword', 'SaltyStr']
+
+from typing import TypeVar
+
+
 class SaltyPassword(str):
     def is_(self, other: str) -> bool:
         """
@@ -20,7 +25,7 @@ class SaltyPassword(str):
         return check_password_hash(self, other)
 
     @classmethod
-    def wrap(cls, saltypassword: Any) -> Self:
+    def wrap(cls, saltypassword: str) -> Self:
         """
         wraps salty password with ``SaltyPassword``
         :param saltypassword: saltypassword to wrap
@@ -34,3 +39,6 @@ class SaltyPassword(str):
         :param original: the original password
         """
         return cls(generate_password_hash(original))
+
+
+SaltyStr = TypeVar('SaltyStr', SaltyPassword, str)

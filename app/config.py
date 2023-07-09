@@ -5,6 +5,9 @@ from random import randint
 from sqlalchemy import URL
 
 
+__all__ = ['AppConfig']
+
+
 class AppConfig:
     # env secret key or hard-coded string
     SECRET_KEY = os.environ.get('SECRET_KEY') or ''.join([chr(randint(48, 122)) for i in range(32)])
