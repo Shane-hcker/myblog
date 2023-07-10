@@ -3,10 +3,10 @@
 {% block content %}
   <!-- getting flask.flash() messages -->
   <!-- within blocks like this, var assign should follow by a `with` -->
-  {% with messages = get_flashed_messages() %}
-  {% if messages %}
+  {% with flash_messages = get_flashed_messages() %}
+  {% if flash_messages %}
     <ul>
-      {% for msg in messages %}
+      {% for msg in flash_messages %}
       <li>[{{msg}}]</li>
       {% endfor %}
     </ul>

@@ -4,11 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  {% if route %}
-  <title>Shane's Blog - {{route}}</title>
-  {% else %}
-  <title>Shane's Blog - Somewhere</title>
-  {% endif %}
+  <title>
+    {% if route %}
+      Shane's Blog - {{route}}
+    {% else %}
+      Shane's Blog - Somewhere
+    {% endif %}
+  </title>
   <style>
       * {
           padding: 0;
@@ -31,11 +33,7 @@
         color: white;
     }
 
-    /*.tabs a:hover {*/
-    /*    font-weight: bold;*/
-    /*}*/
-
-    .home, .login {
+    .home, .log {
         width: 400px;
         height: 125px;
         padding: 5px 5px 5px 5px;
@@ -44,15 +42,15 @@
         margin-right: 10px;
     }
     /* Login Forms */
-    form {
+    .form {
         margin-left: 10px;
     }
 
-    form .text {
+    .form .input {
         width: 300px;
     }
 
-    form .error {
+    .form .error {
         color: red;
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         font-size: 10px;
@@ -71,12 +69,17 @@
         Home
       </a>
     </span>
-
-    <span class="login tabs">
-      <a href="{{url_for('login')}}">
-        Login
-      </a>
-    </span>
+      <span class="log tabs">
+        {% if current_user.is_anonymous %}
+          <a href="{{url_for('login')}}">
+            Login
+          </a>
+        {% else %}
+          <a href="{{url_for('logout')}}">
+            Logout
+          </a>
+        {% endif %}
+      </span>
   </header>
 
   <div class="welcome">
