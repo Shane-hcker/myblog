@@ -6,12 +6,12 @@ from functools import partial
 import flask
 
 # Plugins
-from flask_login import (login_user, current_user, logout_user, login_required)
+from flask_login import (login_user, current_user, logout_user, )
 
 from . import app
 from . import forms
 from .models import *
-
+from .utils.validators import login_required
 from typing import Dict
 
 render_template = partial(flask.render_template, curr_time=time.strftime('%Y-%m-%d %H:%M'))
@@ -29,7 +29,7 @@ def getPosts() -> List[Dict[str, Any]]:
 
 @app.route('/')
 @app.route('/home')
-@login_required  #
+@login_required('login', 'Please login to continue access the Home Page, thank you.')
 def home():
     # the chosen path name for templates: templates
     return render_template('home.html', route='Home', posts=getPosts())
@@ -60,7 +60,7 @@ async def login() -> Any:
 
     # getting `next` from URL
     next_page = flask.request.args.get('next')
-    print(next_page)
+    # if next_page or
 
     # flask.url_for() -> prevent future route change
     # url_for refers to the func that covers the template
@@ -77,3 +77,9 @@ def logout():
 def signup():
     if not (regForm := forms.UserRegForm()).validate_on_submit():
         return render_template('signup.html', regForm=regForm, route='Sign Up')
+
+    user = BlogUser.query.filter_by(email=regForm.email.data).first()
+
+    if user:
+        flask.flash('Email has been occupied or account already exists')
+        return flask.redirect(flask.url_for('signup'))

@@ -45,6 +45,13 @@
         {{ regForm.remember.label }}
       </div>
       {{ regForm.register() }}
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for msg in messages %}
+            <div class="error">[{{msg}}]</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
     </form>
   </div>
 {% endblock %}
