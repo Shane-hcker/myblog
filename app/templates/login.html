@@ -4,7 +4,7 @@
 <div class="form">
   <form action='' method='post' novalidate>
     <!-- mandatory for forms -->
-    {{loginform.hidden_tag()}}
+    {{ loginform.hidden_tag() }}
     <div>
       {{ loginform.email.label }} <br>
       {{ loginform.email(placeholder="example@example.com", class='input') }}

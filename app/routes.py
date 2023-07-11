@@ -29,7 +29,7 @@ def getPosts() -> List[Dict[str, Any]]:
 
 @app.route('/')
 @app.route('/home')
-@login_required
+@login_required  #
 def home():
     # the chosen path name for templates: templates
     return render_template('home.html', route='Home', posts=getPosts())
@@ -58,14 +58,13 @@ async def login() -> Any:
     msg = f'{username} logged in at {login_time}\tRemember: {do_remember}'
     flask.flash(msg)
 
+    # getting `next` from URL
+    next_page = flask.request.args.get('next')
+    print(next_page)
+
     # flask.url_for() -> prevent future route change
     # url_for refers to the func that covers the template
     return flask.redirect(flask.url_for('home'))  # redirect
-
-
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    return render_template('signup.html', route='Sign Up')
 
 
 @app.route('/logout')
@@ -73,3 +72,8 @@ def logout():
     logout_user()  # no args required.
     return flask.redirect(flask.url_for('home'))
 
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if not (regForm := forms.UserRegForm()).validate_on_submit():
+        return render_template('signup.html', regForm=regForm, route='Sign Up')

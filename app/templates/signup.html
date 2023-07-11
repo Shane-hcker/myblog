@@ -3,21 +3,48 @@
 {% block content %}
   <div class="form">
     <form action="" method="post">
-        <div>
-            
-        </div>
-        <div>
+      {{regForm.hidden_tag()}}
+      <div>
+        {{ regForm.email.label }} <br>
+        {{ regForm.email(placeholder="example@example.com", class='input') }}
+        <!-- error output when sth is not valid -->
+        {% for error in regForm.email.errors %}
+        <br>
+        <span class="error">[{{error}}]</span>
+        {% endfor %}
+      </div>
+      <div>
+        {{ regForm.username.label }} <br>
+        {{ regForm.username(placeholder="Username...", class='input') }}
 
-        </div>
-        <div>
+        {% for error in regForm.username.errors %}
+        <br>
+        <span class="error">[{{error}}]</span>
+        {% endfor %}
+      </div>
+      <div>
+        {{ regForm.password.label }} <br>
+        {{ regForm.password(placeholder='Password...', class='input') }}
 
-        </div>
-        <div>
+        {% for error in regForm.password.errors %}
+        <br>
+        <span class="error">[{{error}}]</span>
+        {% endfor %}
+      </div>
+      <div>
+        {{ regForm.confirm_password.label }} <br>
+        {{ regForm.confirm_password(placeholder='Confirm Your Password', class='input') }}
 
-        </div>
-        <div>
-
-        </div>
+        {% for error in regForm.confirm_password.errors %}
+        <br>
+        <span class="error">[{{error}}]</span>
+        {% endfor %}
+      </div>
+      <div>
+        {{ regForm.remember() }}
+        {{ regForm.remember.label }}
+      </div>
+      {{ regForm.register() }}
     </form>
   </div>
 {% endblock %}
