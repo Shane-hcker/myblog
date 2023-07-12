@@ -11,64 +11,16 @@
       Shane's Blog - Somewhere
     {% endif %}
   </title>
-  <style>
-      * {
-          padding: 0;
-          margin: 0;
-      }
-    .welcome {
-        font-weight: bold;
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        margin-left: 10px;
-    }
-
-    .nav {
-        height: 25px;
-        margin-left: 10px;
-        margin-top: 10px;
-    }
-    .tabs a {
-        text-decoration: none;
-        text-align: center;
-        color: white;
-    }
-
-    .home, .log {
-        width: 400px;
-        height: 125px;
-        padding: 5px 5px 5px 5px;
-        border-radius: 5px;
-        background-color: dodgerblue;
-        margin-right: 10px;
-    }
-    /* Login Forms */
-    .form {
-        margin-left: 10px;
-    }
-
-    .form .input {
-        width: 300px;
-    }
-
-    .form .error {
-        color: red;
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        font-size: 16px;
-    }
-
-    .post {
-        margin-left: 10px;
-    }
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
   <header class="nav">
     <span class="home tabs">
-<!--      -->
       <a href="{{url_for('home')}}">
         Home
       </a>
     </span>
+
       <span class="log tabs">
         {% if current_user.is_anonymous %}
           <a href="{{url_for('login')}}">
@@ -80,12 +32,15 @@
           </a>
         {% endif %}
       </span>
+      <span class="time">
+        {{current_time}}
+      </span>
   </header>
 
   <div class="welcome">
     <h1>Shane's Blog</h1>
     <h2>Very good...</h2>
-    <h3>it's {{curr_time}} now...</h3>
+<!--    <h3>it's {{curr_time}} now...</h3>-->
     <hr>
   </div>
   

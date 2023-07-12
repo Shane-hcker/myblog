@@ -46,6 +46,10 @@ class BlogUser(UserMixin, db.Model):  # One
     posts = db.relationship('Posts', backref='poster', lazy=True)
 
     @staticmethod
+    def get_uuser(**kwargs) -> "BlogUser":
+        return BlogUser.query.filter_by(**kwargs).first()
+
+    @staticmethod
     def isUserValid(form: FlaskForm, user: "BlogUser") -> bool:
         return user and user.password.isHashOf(form.password.data)
 

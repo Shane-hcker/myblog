@@ -5,10 +5,10 @@ import flask
 
 # Plugins
 from flask_login import current_user
-from wtforms.validators import (StopValidation, DataRequired)
+from wtforms.validators import (StopValidation)
 
 
-__all__ = ['ConfirmMatch', 'login_required']
+__all__ = ['ConfirmMatch', 'loginRequired']
 
 
 class ConfirmMatch:
@@ -29,7 +29,7 @@ class ConfirmMatch:
         raise StopValidation(message)
 
 
-def login_required(redirection, flash_message=None):
+def loginRequired(redirection, flash_message=None):
     def outer(func):
         @wraps(func)
         def inner(*args, **kwargs):
