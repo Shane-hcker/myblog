@@ -8,7 +8,7 @@ from werkzeug.security import check_password_hash
 from flask_login import (UserMixin, AnonymousUserMixin)
 from flask_wtf import FlaskForm
 
-from app import db, login_manager
+from app import db, login_manager, current_time
 from .datatypes import *
 from .utils.saltypassword import *
 
@@ -62,22 +62,17 @@ class BlogUser(UserMixin, db.Model):  # One
     __repr__ = __str__
 
     @property
-    def email_(self) -> str: return self.email
-
-    @email_.setter
-    def email_(self, value: str) -> None: self.email = value
-
-    @property
-    def username_(self) -> str: return self.username
-
-    @username_.setter
-    def username_(self, value: SaltyStr) -> None: self.username = value
-
-    @property
     def password(self) -> SaltyPassword: return self.salty_password
 
     @password.setter
     def password(self, value: str) -> None: self.salty_password = value
+
+    def reset_recent_login(self, now=True):
+        if now:
+            self.recent_login = current_time()
+            return
+        self.recent_login = datetime(0)
+        db.session.commit()
 
 
 class Posts(db.Model):  # Many

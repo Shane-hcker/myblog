@@ -1,53 +1,57 @@
 * {
-    padding: 0;
-    margin: 0;
+  padding: 0;
+  margin: 0;
 }
 .welcome {
-    font-weight: bold;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    margin-left: 10px;
+  font-weight: bold;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin-left: 10px;
 }
 
 .nav {
-    height: 25px;
-    margin-left: 10px;
-    margin-top: 10px;
-    display: flex;
-}
-.tabs a {
-    text-decoration: none;
-    text-align: center;
-    color: white;
+  height: 25px;
+  margin-left: 10px;
+  margin-top: 10px;
 }
 
-.home, .log {
-    width: 400px;
-    height: 125px;
-    padding: 5px 5px 5px 5px;
-    border-radius: 5px;
-    background-color: dodgerblue;
-    margin-right: 10px;
+.tabs {
+  width: 400px;
+  height: 125px;
+  padding: 5px 5px 5px 5px;
+  border-radius: 5px;
+  background-color: dodgerblue;
+  margin-right: 10px;
 }
+
+.tabs a {
+  text-decoration: none;
+  text-align: center;
+  color: white;
+}
+
 /* Login Forms */
 .form {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 .form .input {
-    width: 300px;
+  width: 300px;
 }
 
 .form .error {
-    color: red;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 16px;
+  color: red;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
 }
+
+
+.form .success {
+  color: green;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+}
+
 
 .post {
-    margin-left: 10px;
+  margin-left: 10px;
 }
-
-.time {
-    justify-content: right;
-}
-

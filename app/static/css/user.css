@@ -1,0 +1,77 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.nav {
+  height: 25px;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.tabs {
+  width: 400px;
+  height: 125px;
+  padding: 5px 5px 5px 5px;
+  border-radius: 5px;
+  background-color: dodgerblue;
+  margin-right: 10px;
+}
+
+.tabs a {
+  text-decoration: none;
+  text-align: center;
+  color: white;
+}
+
+.box {
+  margin: 100px auto;
+  width: 1200px;
+  height: 550px;
+  border-radius: 7px;
+  overflow: hidden;
+  box-shadow: 6px 7px 20px rgb(0, 0, 0, .5);
+  background-color: ghostwhite;
+}
+
+.box > div {
+  display: inline-block;
+  height: 100%;
+  overflow: hidden;
+  background-color: ghostwhite;
+}
+
+.box .sidebar {
+  width: 170px;
+  box-shadow: 6px 0 15px rgb(0, 0, 0, .5);
+}
+
+.tab {
+  color: black;
+  text-decoration: none;
+}
+
+.tab:hover {
+  font-style: italic;
+}
+
+.tab div {
+  padding-left: 10px;
+  padding-top: 10px;
+  font-size: 15px;
+  height: 25px;
+  width: 100%;
+  border-bottom: 2px solid grey;
+}
+
+.box .content {
+  margin-left: 30px;
+}
+
+.username {
+  margin-top: 10px;
+}
+
+.username h1, .username h2 {
+  display: inline-block;
+}

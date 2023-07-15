@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
 from typing import *
+import time
 import flask
 # Plugins
 from flask_sqlalchemy import SQLAlchemy  # connector
 from flask_migrate import Migrate  # db modification migrator
 from flask_login import LoginManager  # user login manager
-
 
 app = flask.Flask(__name__)
 
@@ -20,5 +20,11 @@ migrate = Migrate(app, db)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'  # resembles url_for
+
+
+current_time = lambda: time.strftime('%Y-%m-%d %H:%M')
+success = lambda string: f'success;{string}'
+fail = lambda string: f'fail;{string}'
+
 
 from app import routes, models, datatypes

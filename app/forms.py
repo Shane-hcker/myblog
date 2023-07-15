@@ -23,11 +23,10 @@ class UserLoginForm(UserForm):
 
 class UserRegForm(UserForm):
     confirm_password = PasswordField('Confirm your password', validators=[DataRequired()])
-    remember = BooleanField(label='Remember Me!!!')
     register = SubmitField(label='Register')
 
     def validate_confirm_password(self, confirm_password):
-        if confirm_password.data == self.password.data:
+        if confirm_password.data != self.password.data:
             raise ValidationError('Passwords do not match.')
 
     def validate_username(self, username):
@@ -35,7 +34,7 @@ class UserRegForm(UserForm):
         validate_<field_name>
         """
         if BlogUser.get_uuser(username=username.data):
-            raise ValidationError('Username already exists')
+            raise ValidationError('Username already exists, please try again with other usernames')
 
     def validate_email(self, email):
         if BlogUser.get_uuser(email=email.data):
