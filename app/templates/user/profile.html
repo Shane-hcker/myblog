@@ -1,8 +1,10 @@
-{% extends "base.html" %}
+{% extends "user/base.html" %}
 
 {% block content %}
   <div class="username">
-    <h2>Current User:</h2>
+    <img src="{{ current_user.avatar(360) }}" height="50">
+    &nbsp;&nbsp;
+    <h2>Current User:&nbsp;</h2>
     <h1>{{ current_user.username }}</h1>
   </div>
   <hr>

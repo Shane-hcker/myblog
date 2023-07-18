@@ -37,7 +37,7 @@ class BlogUser(UserMixin, db.Model):  # One
     id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(VARCHAR(64), unique=True, nullable=False)
     username = Column(VARCHAR(52), unique=True, nullable=False)
-    salty_password: SaltyStr = Column(SaltyVarChar(102), nullable=True)
+    password: SaltyStr = Column(SaltyVarChar(102), nullable=True)
     recent_login = Column(DateTime, nullable=True, default=datetime.now)
 
     # relationship() |>
@@ -71,10 +71,11 @@ class BlogUser(UserMixin, db.Model):  # One
         where_clause = and_(
             eval(f'BlogUser.{k} == \'{v}\'') for k, v in kwargs.items()
         )
-        return db.session.execute(select(BlogUser).where(where_clause)).first()
+        return db.session.scalar(select(BlogUser).where(where_clause))
 
     @staticmethod
     def isUserValid(form: FlaskForm, user: "BlogUser") -> bool:
+        print(user)
         return user and user.password.isHashOf(form.password.data) and user.email == form.email.data.strip()
 
     def check_pwd(self, other) -> bool:
@@ -82,12 +83,6 @@ class BlogUser(UserMixin, db.Model):  # One
 
     def __str__(self):
         return f"BlogUser(username={self.username}, email={self.email})"
-
-    @property
-    def password(self) -> SaltyPassword: return self.salty_password
-
-    @password.setter
-    def password(self, value: str) -> None: self.salty_password = value
 
     __repr__ = __str__
 

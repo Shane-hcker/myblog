@@ -86,6 +86,13 @@ async def login() -> Any:
     return flask.redirect(next_page)  # redirect
 
 
+@app.route('/user/<username>/profile')
+@login_required
+def profile(username):
+    return render_template('user/profile.html', current_time=time.strftime('%Y-%m-%d %H:%M'),
+                           flash_parse=flash_parse)
+
+
 @app.route('/logout')
 def logout():
     logout_user()  # no args required.
@@ -109,15 +116,4 @@ def signup():
 
     flask.flash(success('you successfully registered your account, please login...'))
     return flask.redirect(flask.url_for('login'))
-
-
-@app.route('/user/<username>')
-@login_required
-def user(username):
-    return render_template('user/user.html', current_time=time.strftime('%Y-%m-%d %H:%M'),
-                           flash_parse=flash_parse)
-
-
-def foo(*args):
-    pass
 

@@ -65,6 +65,7 @@
 }
 
 .box .content {
+  width: 950px;
   margin-left: 30px;
 }
 
@@ -72,6 +73,6 @@
   margin-top: 10px;
 }
 
-.username h1, .username h2 {
+.username h1, .username h2, .username img {
   display: inline-block;
 }
