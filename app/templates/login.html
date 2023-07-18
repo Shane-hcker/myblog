@@ -42,21 +42,9 @@
   <a href="{{url_for('signup')}}">Sign Up</a>
 
   {% with get_flash = get_flashed_messages() %}
-    {% if get_flash %}
-      {% for msg in get_flash %}
-        {% with msg_split = msg.split(';') %}
-          {% with status = msg_split[0] %}
-            {% if status == 'fail' %}
-              <div class="error">{{msg_split[-1]}}</div>
-            {% elif status == 'success' %}
-              <div class="success">{{msg_split[-1]}}</div>
-            {% else %}
-              <div class="error">{{msg_split[-1]}}</div>
-            {% endif %}
-          {% endwith %}
-        {% endwith %}
-      {% endfor %}
-    {% endif %}
+    {% for msg in flash_parse(get_flash) %}
+      <div class="{{ msg[0] }}">{{ msg[1] }}</div>
+    {% endfor %}
   {% endwith %}
 </div>
 

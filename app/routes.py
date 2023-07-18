@@ -8,7 +8,7 @@ import flask
 # Plugins
 from flask_login import (login_user, current_user, logout_user, login_required)
 
-from . import app, forms, db, success, fail
+from . import app, forms, db, success, fail, forEach
 from .models import *
 from .utils.saltypassword import *
 
@@ -16,14 +16,28 @@ from .utils.saltypassword import *
 render_template = partial(flask.render_template)
 
 
-def getPosts() -> List[Dict[str, Any]]:
+def getAllPosts() -> List[Dict[str, Any]]:
     return [
         {
             'author': post.poster.username,
-            'content': post.content_,
+            'content': post.content,
             'date': post.post_time,
         } for post in Posts.query.all()
     ]
+
+
+def __parse_flash(msg: str) -> List[str]:
+    msg = msg.split(';')
+    return [
+        'success' if msg[0] == 'success' else 'error',
+        msg[-1]
+    ]
+
+
+def flash_parse(flash_messages) -> Optional[List[str]]:
+    if not flash_messages:
+        return []
+    return forEach(flash_messages, __parse_flash, ret_val=True)
 
 
 @app.route('/')
@@ -31,8 +45,8 @@ def getPosts() -> List[Dict[str, Any]]:
 @login_required
 def home():
     # the chosen path name for templates: templates
-    return render_template('home.html', route='Home', posts=getPosts(),
-                           current_time=time.strftime('%Y-%m-%d %H:%M'))
+    return render_template('home.html', route='Home', posts=getAllPosts(),
+                           current_time=time.strftime('%Y-%m-%d %H:%M'), flash_parse=flash_parse)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -43,9 +57,9 @@ async def login() -> Any:
     # True |> POST + (validators -> true)
     if not (login_form := forms.UserLoginForm()).validate_on_submit():
         return render_template('login.html', loginform=login_form, route='Sign In',
-                               current_time=time.strftime('%Y-%m-%d %H:%M'))
+                               current_time=time.strftime('%Y-%m-%d %H:%M'), flash_parse=flash_parse)
 
-    logged_in_user = BlogUser.get_uuser(email=login_form.email.data)
+    logged_in_user = BlogUser.get_uuser(email=login_form.email.data, username=login_form.username.data)
     if not BlogUser.isUserValid(login_form, logged_in_user):
         flask.flash(fail('Invalid username or password'))
         return flask.redirect(flask.url_for('login'))
@@ -58,7 +72,7 @@ async def login() -> Any:
     # login
     login_user(logged_in_user, remember=login_form.remember.data)
 
-    logged_in_user.reset_recent_login(now=True)
+    logged_in_user.reset_recent_login()
 
     # display info
     username, do_remember = login_form.username.data, login_form.remember.data
@@ -82,7 +96,7 @@ def logout():
 def signup():
     if not (regForm := forms.UserRegForm()).validate_on_submit():
         return render_template('signup.html', regForm=regForm, route='Sign Up',
-                               current_time=time.strftime('%Y-%m-%d %H:%M'))
+                               current_time=time.strftime('%Y-%m-%d %H:%M'), flash_parse=flash_parse)
 
     new_user = BlogUser()
     new_user.email = regForm.email.data
@@ -100,4 +114,10 @@ def signup():
 @app.route('/user/<username>')
 @login_required
 def user(username):
-    return render_template('user.html', current_time=time.strftime('%Y-%m-%d %H:%M'))
+    return render_template('user/user.html', current_time=time.strftime('%Y-%m-%d %H:%M'),
+                           flash_parse=flash_parse)
+
+
+def foo(*args):
+    pass
+

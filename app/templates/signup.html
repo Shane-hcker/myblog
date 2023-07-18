@@ -45,12 +45,9 @@
 
 <!--     error handling -->
       {% with messages = get_flashed_messages() %}
-        {% if messages %}
-          {% for msg in messages %}
-            <div class="error">[{{msg}}]</div>
-          {% endfor %}
-        {% endif %}
-
+        {% for msg in flash_parse(messages) %}
+          <div class="{{ msg[0] }}">{{ msg[1] }}</div>
+        {% endfor %}
       {% endwith %}
     </form>
   </div>

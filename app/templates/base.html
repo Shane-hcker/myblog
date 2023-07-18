@@ -21,14 +21,6 @@
       </a>
     </span>
 
-    {% if not current_user.is_anonymous%}
-      <span class="tabs">
-        <a href="{{ url_for('user', username=current_user.username) }}">
-          User Profile
-        </a>
-      </span>
-    {% endif %}
-
     <span class="tabs">
       {% if current_user.is_anonymous %}
         <a href="{{url_for('login')}}">
@@ -40,6 +32,15 @@
         </a>
       {% endif %}
     </span>
+
+    {% if not current_user.is_anonymous%}
+    <span class="tabs">
+        <a href="{{ url_for('user', username=current_user.username) }}">
+          User Profile
+        </a>
+      </span>
+    {% endif %}
+
     <span class="time">
       {{current_time}}
     </span>

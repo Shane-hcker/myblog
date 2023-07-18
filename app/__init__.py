@@ -27,4 +27,10 @@ success = lambda string: f'success;{string}'
 fail = lambda string: f'fail;{string}'
 
 
+def forEach(iterable: Iterable, func, ret_val=True) -> Optional[List[Any]]:
+    res = [func(item) for item in iterable]
+    if ret_val:
+        return res
+
+
 from app import routes, models, datatypes

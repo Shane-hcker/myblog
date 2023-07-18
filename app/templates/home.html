@@ -4,14 +4,9 @@
   <!-- getting flask.flash() messages -->
   <!-- within blocks like this, var assign should follow by a `with` -->
   {% with flash_messages = get_flashed_messages() %}
-  {% if flash_messages %}
-    <ul>
-      {% for msg in flash_messages %}
-      <li>[{{msg}}]</li>
-      {% endfor %}
-    </ul>
-    <hr>
-  {% endif %}
+    {% for msg in flash_parse(flash_messages) %}
+      <div class="{{ msg[0] }}" style="margin-left: 10px">{{ msg[1] }}</div>
+    {% endfor %}
   {% endwith %}
 
   {% for post in posts %}
