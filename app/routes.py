@@ -56,7 +56,7 @@ async def login() -> Any:
 
     # True |> POST + (validators -> true)
     if not (login_form := forms.UserLoginForm()).validate_on_submit():
-        return render_template('login.html', loginform=login_form, route='Sign In',
+        return render_template('login.html', login_form=login_form, route='Sign In',
                                current_time=time.strftime('%Y-%m-%d %H:%M'), flash_parse=flash_parse)
 
     logged_in_user = BlogUser.get_uuser(email=login_form.email.data, username=login_form.username.data)
@@ -89,8 +89,23 @@ async def login() -> Any:
 @app.route('/user/<username>/profile')
 @login_required
 def profile(username):
-    return render_template('user/profile.html', current_time=time.strftime('%Y-%m-%d %H:%M'),
-                           flash_parse=flash_parse)
+    return render_template('user/profile.html', flash_parse=flash_parse,
+                           current_time=time.strftime('%Y-%m-%d %H:%M'))
+
+
+@app.route('/profile_edit', methods=['GET', "POST"])
+@login_required
+def profile_edit():
+    if not (edit_form := forms.ProfileEditForm()).validate_on_submit():
+        return render_template('user/pedit.html', edit_form=edit_form, current_time=time.strftime('%Y-%m-%d %H:%M'))
+
+
+@app.route('/user/<username>/posts')
+@login_required
+def user_posts(username):
+    posts = current_user.getUserPosts()
+    return render_template('user/user_posts.html', posts=posts,
+                           current_time=time.strftime('%Y-%m-%d %H:%M'))
 
 
 @app.route('/logout')
@@ -101,14 +116,14 @@ def logout():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if not (regForm := forms.UserRegForm()).validate_on_submit():
-        return render_template('signup.html', regForm=regForm, route='Sign Up',
-                               current_time=time.strftime('%Y-%m-%d %H:%M'), flash_parse=flash_parse)
+    if not (reg_form := forms.UserRegForm()).validate_on_submit():
+        return render_template('signup.html', reg_form=reg_form, route='Sign Up', flash_parse=flash_parse,
+                               current_time=time.strftime('%Y-%m-%d %H:%M'))
 
     new_user = BlogUser()
-    new_user.email = regForm.email.data
-    new_user.username = regForm.username.data
-    new_user.password = SaltyPassword.saltify(regForm.password.data)
+    new_user.email = reg_form.email.data
+    new_user.username = reg_form.username.data
+    new_user.password = SaltyPassword.saltify(reg_form.password.data)
 
     db.session.add(new_user)
     db.session.flush()
@@ -116,4 +131,3 @@ def signup():
 
     flask.flash(success('you successfully registered your account, please login...'))
     return flask.redirect(flask.url_for('login'))
-

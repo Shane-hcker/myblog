@@ -1,7 +1,9 @@
 # -*- encoding: utf-8 -*-
 from flask_wtf import FlaskForm
-from wtforms import StringField, BooleanField, PasswordField, SubmitField
 from wtforms.validators import (DataRequired, Length, Email, ValidationError)
+from wtforms import (StringField, BooleanField, PasswordField,
+    SubmitField, FileField, TextAreaField
+)
 
 from .models import BlogUser
 
@@ -39,3 +41,11 @@ class UserRegForm(UserForm):
     def validate_email(self, email):
         if BlogUser.get_uuser(email=email.data):
             raise ValidationError('Email has been occupied or account already exists')
+
+
+class ProfileEditForm(FlaskForm):
+    username = StringField(label='Your Username', validators=[DataRequired()])
+    email = StringField(label='Your Email: ', validators=[DataRequired(),
+                        Email('nvalid email', check_deliverability=True)])
+    avatar = FileField(label='Upload Your new avatar')
+    # description = TextAreaField(label='Your Description: ')

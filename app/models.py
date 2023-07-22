@@ -64,7 +64,7 @@ class BlogUser(UserMixin, db.Model):  # One
         }
 
     def getUserPosts(self) -> List[Dict[str, Any]]:
-        return forEach(Posts.query.filter_by(poster=self.username), self.__parse_post)
+        return forEach(Posts.query.filter_by(poster=self).all(), self.__parse_post)
 
     @staticmethod
     def get_uuser(**kwargs) -> "BlogUser":
@@ -75,13 +75,12 @@ class BlogUser(UserMixin, db.Model):  # One
 
     @staticmethod
     def isUserValid(form: FlaskForm, user: "BlogUser") -> bool:
-        print(user)
         return user and user.password.isHashOf(form.password.data) and user.email == form.email.data.strip()
 
     def check_pwd(self, other) -> bool:
         return self.password.isHashOf(other)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"BlogUser(username={self.username}, email={self.email})"
 
     __repr__ = __str__

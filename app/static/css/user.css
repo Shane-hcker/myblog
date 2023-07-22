@@ -28,10 +28,6 @@
   margin: 100px auto;
   width: 1200px;
   height: 550px;
-  border-radius: 7px;
-  overflow: hidden;
-  box-shadow: 6px 7px 20px rgb(0, 0, 0, .5);
-  background-color: ghostwhite;
 }
 
 .box > div {
@@ -41,8 +37,9 @@
   background-color: ghostwhite;
 }
 
-.box .sidebar {
+.sidebar {
   width: 170px;
+  border-radius: 7px;
   box-shadow: 6px 0 15px rgb(0, 0, 0, .5);
 }
 
@@ -52,10 +49,16 @@
 }
 
 .tab:hover {
-  font-style: italic;
+  font-weight: bold;
 }
 
-.tab div {
+.sidebar, .content {
+  display: inline-block;
+  overflow: hidden;
+  height: 100%;
+}
+
+.tab > div {
   padding-left: 10px;
   padding-top: 10px;
   font-size: 15px;
@@ -64,15 +67,16 @@
   border-bottom: 2px solid grey;
 }
 
-.box .content {
+.content {
   width: 950px;
   margin-left: 30px;
 }
 
-.username {
+.userinfo, .my_posts {
   margin-top: 10px;
 }
 
-.username h1, .username h2, .username img {
+
+.userinfo > h1, .userinfo > h2, .userinfo > img {
   display: inline-block;
 }

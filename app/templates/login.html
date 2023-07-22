@@ -4,39 +4,39 @@
 <div class="form">
   <form action='' method='post' novalidate>
     <!-- mandatory for forms -->
-    {{ loginform.hidden_tag() }}
+    {{ login_form.hidden_tag() }}
     <div>
-      {{ loginform.email.label }} <br>
-      {{ loginform.email(placeholder="example@example.com", class='input') }}
+      {{ login_form.email.label }} <br>
+      {{ login_form.email(placeholder="example@example.com", class='input') }}
       <!-- error output when sth is not valid -->
-      {% for error in loginform.email.errors %}
+      {% for error in login_form.email.errors %}
         <br>
         <span class="error">[{{error}}]</span>
       {% endfor %}
     </div>
     <div>
-      {{ loginform.username.label }} <br>
-      {{ loginform.username(placeholder="Username...", class='input') }}
+      {{ login_form.username.label }} <br>
+      {{ login_form.username(placeholder="Username...", class='input') }}
 
-      {% for error in loginform.username.errors %}
+      {% for error in login_form.username.errors %}
         <br>
         <span class="error">[{{error}}]</span>
       {% endfor %}
     </div>
     <div>
-      {{ loginform.password.label }} <br>
-      {{ loginform.password(placeholder='Password...', class='input') }}
+      {{ login_form.password.label }} <br>
+      {{ login_form.password(placeholder='Password...', class='input') }}
 
-      {% for error in loginform.password.errors %}
+      {% for error in login_form.password.errors %}
         <br>
         <span class="error">[{{error}}]</span>
       {% endfor %}
     </div>
     <div>
-      {{ loginform.remember() }}
-      {{ loginform.remember.label }}
+      {{ login_form.remember() }}
+      {{ login_form.remember.label }}
     </div>
-    {{ loginform.login() }}
+    {{ login_form.login() }}
   </form>
   Don't have an account?
   <a href="{{url_for('signup')}}">Sign Up</a>
