@@ -1,4 +1,59 @@
 {% extends "user/base.html" %}
 
 {% block content %}
+  <h1>
+    Profile Editing
+  </h1>
+  <hr>
+  <form action="" method="post">
+    {{ edit_form.hidden_tag() }}
+    <table class="pedit">
+      <tr>
+        <td class="edit_label">
+          {{ edit_form.avatar.label }}
+        </td>
+        <td>
+          {{ edit_form.avatar() }}
+        </td>
+      </tr>
+
+      <tr>
+        <td class="edit_label">
+          {{ edit_form.username.label }}
+        </td>
+        <td>
+          {{ edit_form.username(value=current_user.username) }}
+        </td>
+        {% for error in edit_form.username.errors %}
+        <td class="error">
+          {{ error }}
+        </td>
+        {% endfor %}
+      </tr>
+
+      <tr>
+        <td class="edit_label">
+          {{ edit_form.email.label }}
+        </td>
+        <td>
+          {{ edit_form.email(value=current_user.email) }}
+        </td>
+        {% for error in edit_form.email.errors %}
+        <td class="error">
+          {{ error }}
+        </td>
+        {% endfor %}
+      </tr>
+      <tr>
+        <td colspan="2">
+          {{ edit_form.submit() }}
+        </td>
+        {% with messages = get_flashed_messages() %}
+        {% for msg in flash_parse(messages) %}
+        <td class="{{ msg[0] }}">{{ msg[1] }}</td>
+        {% endfor %}
+        {% endwith %}
+      </tr>
+    </table>
+  </form>
 {% endblock %}

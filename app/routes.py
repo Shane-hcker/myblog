@@ -10,7 +10,7 @@ from flask_login import (login_user, current_user, logout_user, login_required)
 
 from . import app, forms, db, success, fail, forEach
 from .models import *
-from .utils.saltypassword import *
+from app.security.saltypassword import *
 
 
 render_template = partial(flask.render_template)
@@ -93,11 +93,19 @@ def profile(username):
                            current_time=time.strftime('%Y-%m-%d %H:%M'))
 
 
-@app.route('/profile_edit', methods=['GET', "POST"])
+@app.route('/user/<username>/profile/edit', methods=['GET', "POST"])
 @login_required
-def profile_edit():
+def profile_edit(username):
     if not (edit_form := forms.ProfileEditForm()).validate_on_submit():
-        return render_template('user/pedit.html', edit_form=edit_form, current_time=time.strftime('%Y-%m-%d %H:%M'))
+        return render_template('user/pedit.html', edit_form=edit_form, flash_parse=flash_parse,
+                               current_time=time.strftime('%Y-%m-%d %H:%M'))
+
+    current_user.username = edit_form.username.data
+    current_user.email = edit_form.email.data
+    db.session.commit()
+
+    flask.flash(success('successfully changed your profile!'))
+    return flask.redirect(flask.url_for('profile_edit', username=current_user.username))
 
 
 @app.route('/user/<username>/posts')

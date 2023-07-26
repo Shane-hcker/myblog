@@ -2,15 +2,14 @@
 from typing import *
 from datetime import datetime
 from sqlalchemy import (VARCHAR, Integer, DateTime, Text, select, and_)
-from werkzeug.security import check_password_hash
 
 # Plugins
-from flask_login import (UserMixin, AnonymousUserMixin)
+from flask_login import (UserMixin)
 from flask_wtf import FlaskForm
 
 from app import db, login_manager, current_time, forEach
 from .datatypes import *
-from .utils.saltypassword import *
+from app.security.saltypassword import *
 from .utils.gravatar import *
 
 

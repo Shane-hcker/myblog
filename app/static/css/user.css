@@ -67,6 +67,18 @@
   border-bottom: 2px solid grey;
 }
 
+.error {
+  color: red;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+}
+
+.success {
+  color: green;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+}
+
 .content {
   width: 950px;
   margin-left: 30px;
@@ -76,7 +88,12 @@
   margin-top: 10px;
 }
 
-
 .userinfo > h1, .userinfo > h2, .userinfo > img {
   display: inline-block;
+}
+
+.pedit { }
+
+.edit_label {
+  font-weight: bold;
 }

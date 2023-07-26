@@ -39,7 +39,7 @@
           </div>
         </a>
 
-        <a href="{{ url_for('profile_edit') }}" class="tab">
+        <a href="{{ url_for('profile_edit', username=current_user.username) }}" class="tab">
           <div>
             Edit My Profile:
           </div>
