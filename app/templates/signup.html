@@ -3,45 +3,45 @@
 {% block content %}
   <div class="form">
     <form action="" method="post">
-      {{regForm.hidden_tag()}}
+      {{reg_form.hidden_tag()}}
       <div>
-        {{ regForm.email.label }} <br>
-        {{ regForm.email(placeholder="example@example.com", class='input') }}
+        {{ reg_form.email.label }} <br>
+        {{ reg_form.email(placeholder="example@example.com", class='input') }}
         <!-- error output when sth is not valid -->
-        {% for error in regForm.email.errors %}
+        {% for error in reg_form.email.errors %}
         <br>
         <span class="error">[{{error}}]</span>
         {% endfor %}
       </div>
       <div>
-        {{ regForm.username.label }} <br>
-        {{ regForm.username(placeholder="Username...", class='input') }}
+        {{ reg_form.username.label }} <br>
+        {{ reg_form.username(placeholder="Username...", class='input') }}
 
-        {% for error in regForm.username.errors %}
+        {% for error in reg_form.username.errors %}
         <br>
         <span class="error">[{{error}}]</span>
         {% endfor %}
       </div>
       <div>
-        {{ regForm.password.label }} <br>
-        {{ regForm.password(placeholder='Password...', class='input') }}
+        {{ reg_form.password.label }} <br>
+        {{ reg_form.password(placeholder='Password...', class='input') }}
 
-        {% for error in regForm.password.errors %}
+        {% for error in reg_form.password.errors %}
         <br>
         <span class="error">[{{error}}]</span>
         {% endfor %}
       </div>
       <div>
-        {{ regForm.confirm_password.label }} <br>
-        {{ regForm.confirm_password(placeholder='Confirm Your Password', class='input') }}
+        {{ reg_form.confirm_password.label }} <br>
+        {{ reg_form.confirm_password(placeholder='Confirm Your Password', class='input') }}
 
-        {% for error in regForm.confirm_password.errors %}
+        {% for error in reg_form.confirm_password.errors %}
         <br>
         <span class="error">[{{error}}]</span>
         {% endfor %}
       </div>
 
-      {{ regForm.register() }}
+      {{ reg_form.register() }}
 
 <!--     error handling -->
       {% with messages = get_flashed_messages() %}

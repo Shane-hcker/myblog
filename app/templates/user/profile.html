@@ -1,7 +1,7 @@
 {% extends "user/base.html" %}
 
 {% block content %}
-  <div class="username">
+  <div class="userinfo">
     <img src="{{ current_user.avatar(360) }}" height="50">
     &nbsp;&nbsp;
     <h2>Current User:&nbsp;</h2>
@@ -9,7 +9,7 @@
   </div>
   <hr>
   <br>
-  <div class="userinfo">
+  <div class="rlogin">
     recent login: {{ current_user.recent_login }}
   </div>
 {% endblock %}
