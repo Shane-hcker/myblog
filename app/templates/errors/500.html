@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block error %}
+<div style="text-align: center">
+  <h1>500 Internal Server Error</h1>
+  <p>
+    Sorry for your inconvenience! Administrators are contacted to solve the error.
+  </p>
+  <hr>
+  <a href="{{ url_for('home') }}">Back to Home</a>
+</div>
+{% endblock %}

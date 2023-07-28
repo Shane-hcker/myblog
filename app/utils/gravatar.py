@@ -17,23 +17,32 @@ class GravatarURL(str):
 class GravatarFetcher:
     URL = 'https://www.gravatar.com/avatar/'
 
-    def __init__(self, email: str, default=None) -> None:
+    def __init__(self, email: str, default='mp') -> None:
         self.email = email.strip()
-        self.default = default if default else 'mp'
+        self.default = default
+        self.url = None
 
-    def fetch(self, size=10) -> GravatarURL:
+    def __str__(self) -> str:
+        return self.url
+
+    def fetch(self, size=10) -> Self:
         query = {'s': size}
         query.update({'d': self.default}) if self.default else ...
-        hashed = self.__hash_email()
-        return GravatarURL(f'{self.__class__.URL}{hashed}/?{urlencode(query)}')
+        hashed = self.__hash_email(self.email)
+        self.url = GravatarURL(f'{self.__class__.URL}{hashed}/?{urlencode(query)}')
+        return self
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        pass
+        if exc_type:
+            raise exc_type(exc_val)
 
-    def __hash_email(self, email=None):
-        if not email and not self.email:
-            raise ValueError(f'Either `email` or `{self}.email` should be not None')
-        return hashlib.md5((email or self.email).lower().encode()).hexdigest()
+    @staticmethod
+    def __hash_email(email):
+        if not email:
+            raise ValueError(f'parameter \'email\' should be not None')
+        return hashlib.md5(email.lower().encode()).hexdigest()
+
+    __repr__ = __str__

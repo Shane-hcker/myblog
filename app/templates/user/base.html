@@ -29,21 +29,23 @@
       <div class="sidebar">
         <a href="{{ url_for('profile', username=current_user.username) }}" class="tab">
           <div>
-            My Profile
+            Profile
           </div>
         </a>
 
         <a href="{{ url_for('user_posts', username=current_user.username) }}" class="tab">
           <div>
-            My Posts
+            Posts
           </div>
         </a>
 
-        <a href="{{ url_for('profile_edit', username=current_user.username) }}" class="tab">
-          <div>
-            Edit My Profile:
-          </div>
-        </a>
+        {% if username == current_user.username %}
+          <a href="{{ url_for('profile_edit', username=current_user.username) }}" class="tab">
+            <div>
+              Edit Your Profile
+            </div>
+          </a>
+        {% endif %}
 
         <a href="#" class="tab">
           <div>

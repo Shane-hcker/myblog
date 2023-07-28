@@ -14,6 +14,7 @@ from app.security.saltypassword import *
 
 
 render_template = partial(flask.render_template)
+current_time = lambda: time.strftime('%Y-%m-%d %H:%M')
 
 
 def getAllPosts() -> List[Dict[str, Any]]:
@@ -27,10 +28,9 @@ def getAllPosts() -> List[Dict[str, Any]]:
 
 
 def __parse_flash(msg: str) -> List[str]:
-    msg = msg.split(';')
     return [
-        'success' if msg[0] == 'success' else 'error',
-        msg[-1]
+        'success' if (msg_ := msg.split(';'))[0] == 'success'
+        else 'error', msg_[-1]
     ]
 
 
@@ -46,7 +46,7 @@ def flash_parse(flash_messages) -> Optional[List[str]]:
 def home():
     # the chosen path name for templates: templates
     return render_template('home.html', route='Home', posts=getAllPosts(),
-                           current_time=time.strftime('%Y-%m-%d %H:%M'), flash_parse=flash_parse)
+                           current_time=current_time(), flash_parse=flash_parse)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -57,7 +57,7 @@ async def login() -> Any:
     # True |> POST + (validators -> true)
     if not (login_form := forms.UserLoginForm()).validate_on_submit():
         return render_template('login.html', login_form=login_form, route='Sign In',
-                               current_time=time.strftime('%Y-%m-%d %H:%M'), flash_parse=flash_parse)
+                               current_time=current_time(), flash_parse=flash_parse)
 
     logged_in_user = BlogUser.get_uuser(email=login_form.email.data, username=login_form.username.data)
     if not BlogUser.isUserValid(login_form, logged_in_user):
@@ -89,8 +89,8 @@ async def login() -> Any:
 @app.route('/user/<username>/profile')
 @login_required
 def profile(username):
-    return render_template('user/profile.html', flash_parse=flash_parse,
-                           current_time=time.strftime('%Y-%m-%d %H:%M'))
+    return render_template('user/profile.html', flash_parse=flash_parse, username=username,
+                           current_time=current_time())
 
 
 @app.route('/user/<username>/profile/edit', methods=['GET', "POST"])
@@ -98,7 +98,7 @@ def profile(username):
 def profile_edit(username):
     if not (edit_form := forms.ProfileEditForm()).validate_on_submit():
         return render_template('user/pedit.html', edit_form=edit_form, flash_parse=flash_parse,
-                               current_time=time.strftime('%Y-%m-%d %H:%M'))
+                               current_time=current_time(), username=username)
 
     current_user.username = edit_form.username.data
     current_user.email = edit_form.email.data
@@ -112,8 +112,8 @@ def profile_edit(username):
 @login_required
 def user_posts(username):
     posts = current_user.getUserPosts()
-    return render_template('user/user_posts.html', posts=posts,
-                           current_time=time.strftime('%Y-%m-%d %H:%M'))
+    return render_template('user/user_posts.html', posts=posts, username=username,
+                           current_time=current_time())
 
 
 @app.route('/logout')
@@ -126,7 +126,7 @@ def logout():
 def signup():
     if not (reg_form := forms.UserRegForm()).validate_on_submit():
         return render_template('signup.html', reg_form=reg_form, route='Sign Up', flash_parse=flash_parse,
-                               current_time=time.strftime('%Y-%m-%d %H:%M'))
+                               current_time=current_time())
 
     new_user = BlogUser()
     new_user.email = reg_form.email.data

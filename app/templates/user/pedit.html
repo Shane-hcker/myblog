@@ -49,9 +49,9 @@
           {{ edit_form.submit() }}
         </td>
         {% with messages = get_flashed_messages() %}
-        {% for msg in flash_parse(messages) %}
-        <td class="{{ msg[0] }}">{{ msg[1] }}</td>
-        {% endfor %}
+          {% for msg in flash_parse(messages) %}
+            <td class="{{ msg[0] }}">{{ msg[1] }}</td>
+          {% endfor %}
         {% endwith %}
       </tr>
     </table>

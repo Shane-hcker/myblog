@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block error %}
+  <div style="text-align: center">
+    <h1>404 Not Found</h1>
+    <p>
+      Page Not Found. Try again with other means.
+    </p>
+    <hr>
+    <a href="{{ url_for('home') }}">Back to Home</a>
+  </div>
+{% endblock %}

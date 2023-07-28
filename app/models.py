@@ -46,9 +46,9 @@ class BlogUser(UserMixin, db.Model):  # One
     # backref --> field that's about to add to the `many` side(Posts)
     posts = db.relationship('Posts', backref='poster', lazy=True)
 
-    def avatar(self, size=100):
+    def avatar(self, size=100) -> str:
         with GravatarFetcher(self.email) as fetcher:
-            return fetcher.fetch(size)
+            return fetcher.fetch(size).url
 
     def reset_recent_login(self):
         self.recent_login = current_time()
