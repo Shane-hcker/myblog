@@ -1,5 +1,9 @@
 # -*- encoding: utf-8 -*-
+import logging
 from typing import *
+
+from dns.resolver import NoResolverConfiguration
+
 from flask_wtf import FlaskForm, RecaptchaField
 from wtforms.validators import (DataRequired, Length, Email, ValidationError)
 from wtforms import (StringField, BooleanField, PasswordField,
@@ -11,9 +15,19 @@ from .models import BlogUser
 __all__ = ['UserLoginForm', 'UserRegForm']
 
 
+class EmailValidator(Email):
+    def __call__(self, *args, **kwargs):
+        try:
+            return super().__call__(*args, **kwargs)
+        except NoResolverConfiguration:
+            logging.warning('check_deliverability can operate properly, now set to False')
+            self.check_deliverability = False
+            return super().__call__(*args, **kwargs)
+
+
 class UserForm(FlaskForm):
     email = StringField(label='Your Email:', validators=[DataRequired(),
-                        Email('Invalid Email', check_deliverability=True)])
+                        EmailValidator('Invalid Email', check_deliverability=True)])
     username = StringField(label='Your Username:', validators=[DataRequired(), Length(min=4, max=52)])
     password = PasswordField(label='Your Password:', validators=[DataRequired(), Length(min=8)])
     # recaptcha = RecaptchaField()
@@ -56,6 +70,6 @@ class ProfileEditForm(FlaskForm):
     avatar = FileField(label='Upload Your new avatar')
     username = StringField(label='Your Username', validators=[DataRequired(), Length(min=4, max=52)])
     email = StringField(label='Your Email: ', validators=[DataRequired(), Length(min=8),
-                        Email('invalid email', check_deliverability=True)])
+                        EmailValidator('invalid email', check_deliverability=True)])
     # description = TextAreaField(label='Your Description: ')
     submit = SubmitField(label='Confirm Changes')

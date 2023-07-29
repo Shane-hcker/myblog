@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+import logging
 from typing import *
 from datetime import datetime
 from sqlalchemy import (VARCHAR, Integer, DateTime, Text, select, and_)
@@ -8,9 +9,9 @@ from flask_login import (UserMixin)
 from flask_wtf import FlaskForm
 
 from app import db, login_manager, current_time, forEach
-from .datatypes import *
+from app.datatypes import *
 from app.security.saltypassword import *
-from .utils.gravatar import *
+from app.utils.gravatar import *
 
 
 __all__ = ['BlogUser', 'Posts', 'retrieve_user']
@@ -54,16 +55,14 @@ class BlogUser(UserMixin, db.Model):  # One
         self.recent_login = current_time()
         return db.session.commit()
 
-    @staticmethod
-    def __parse_post(post: "Posts"):
-        return {
-            'author': post.poster.username,
-            'content': post.content,
-            'date': post.post_time
-        }
-
     def getUserPosts(self) -> List[Dict[str, Any]]:
         return forEach(Posts.query.filter_by(poster=self).all(), self.__parse_post)
+
+    def check_pwd(self, other) -> bool:
+        return self.password.isHashOf(other)
+
+    def __str__(self) -> str:
+        return f"BlogUser(username={self.username}, email={self.email})"
 
     @staticmethod
     def get_uuser(**kwargs) -> "BlogUser":
@@ -76,11 +75,27 @@ class BlogUser(UserMixin, db.Model):  # One
     def isUserValid(form: FlaskForm, user: "BlogUser") -> bool:
         return user and user.password.isHashOf(form.password.data) and user.email == form.email.data.strip()
 
-    def check_pwd(self, other) -> bool:
-        return self.password.isHashOf(other)
+    @staticmethod
+    def __parse_post(post: "Posts"):
+        return {
+            'author': post.poster.username,
+            'content': post.content,
+            'date': post.post_time
+        }
 
-    def __str__(self) -> str:
-        return f"BlogUser(username={self.username}, email={self.email})"
+    @staticmethod
+    def fetch_all_users(*params) -> List[Dict[str, Any]]:
+        res = []
+        for user in BlogUser.query.all():
+            userdic = {}
+            for p in params:
+                try:
+                    userdic.update({p: eval(f'user.{p}')})
+                except Exception as e:
+                    logging.error(e)
+                    continue
+            res.append(userdic)
+        return res
 
     __repr__ = __str__
 
