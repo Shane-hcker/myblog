@@ -23,3 +23,13 @@ class AppConfig:
     SQLALCHEMY_DATABASE_URI = URL.create('mysql+pymysql', host='localhost', port=3306,
                                          username='root', database='learn_mysql',  password='12345678')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # Mailing Config
+    MAIL_HOST = os.environ.get('MAIL_HOST')
+    MAIL_PORT = int(os.environ.get('MAIL_PORT') or 587)
+    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') is not None
+    MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL') is not None
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    ADMINS = ['shanebilibili@outlook.com', 'shanexiangxbw@gmail.com']
+

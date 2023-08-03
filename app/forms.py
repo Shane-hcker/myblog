@@ -26,10 +26,10 @@ class EmailValidator(Email):
 
 
 class UserForm(FlaskForm):
-    email = StringField(label='Your Email:', validators=[DataRequired(),
+    email = StringField('Your Email:', validators=[DataRequired(),
                         EmailValidator('Invalid Email', check_deliverability=True)])
-    username = StringField(label='Your Username:', validators=[DataRequired(), Length(min=4, max=52)])
-    password = PasswordField(label='Your Password:', validators=[DataRequired(), Length(min=8)])
+    username = StringField('Your Username:', validators=[DataRequired(), Length(min=4, max=52)])
+    password = PasswordField('Your Password:', validators=[DataRequired(), Length(min=8)])
     # recaptcha = RecaptchaField()
 
     @property

@@ -1,6 +1,15 @@
-from . import app, db
+# -*- encoding: utf-8 -*-
+from typing import *
+from flask_mail import Message
+
+from . import app, db, mail
 from flask import render_template
-from .routes import current_time
+
+
+def handle_error(func):
+    def wrapper(*args, **kwargs):
+        ...
+    return wrapper
 
 
 @app.errorhandler(404)

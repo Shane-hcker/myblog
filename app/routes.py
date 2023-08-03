@@ -8,9 +8,10 @@ import flask
 # Plugins
 from flask_login import (login_user, current_user, logout_user, login_required)
 
-from . import app, forms, db, success, fail, forEach
-from .models import *
+from app import app, forms, db, success, fail, forEach
+from app.models import *
 from app.security.saltypassword import *
+from app.security.check import check_valid_username
 
 
 render_template = partial(flask.render_template)
@@ -88,14 +89,19 @@ async def login() -> Any:
 
 @app.route('/user/<username>/profile')
 @login_required
+@check_valid_username
 def profile(username):
     return render_template('user/profile.html', flash_parse=flash_parse, username=username,
-                           current_time=current_time())
+                           current_time=current_time(), user=BlogUser.get_uuser(username=username))
 
 
 @app.route('/user/<username>/profile/edit', methods=['GET', "POST"])
 @login_required
+@check_valid_username
 def profile_edit(username):
+    if username != current_user.username:
+        return render_template('errors/404.html')
+
     if not (edit_form := forms.ProfileEditForm()).validate_on_submit():
         return render_template('user/pedit.html', edit_form=edit_form, flash_parse=flash_parse,
                                current_time=current_time(), username=username)
@@ -110,8 +116,9 @@ def profile_edit(username):
 
 @app.route('/user/<username>/posts')
 @login_required
+@check_valid_username
 def user_posts(username):
-    posts = current_user.getUserPosts()
+    posts = BlogUser.get_uuser(username=username).getUserPosts()
     return render_template('user/user_posts.html', posts=posts, username=username,
                            current_time=current_time())
 

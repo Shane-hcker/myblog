@@ -87,14 +87,14 @@ class BlogUser(UserMixin, db.Model):  # One
     def fetch_all_users(*params) -> List[Dict[str, Any]]:
         res = []
         for user in BlogUser.query.all():
-            userdic = {}
+            user_dict = {}
             for p in params:
                 try:
-                    userdic.update({p: eval(f'user.{p}')})
+                    user_dict.update({p: eval(f'user.{p}')})
                 except Exception as e:
                     logging.error(e)
                     continue
-            res.append(userdic)
+            res.append(user_dict)
         return res
 
     __repr__ = __str__
