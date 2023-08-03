@@ -1,0 +1,13 @@
+dnspython
+logging
+werkzeug
+flask
+sqlalchemy
+wtforms
+requests
+
+flask_sqlalchemy
+flask_migrate
+flask_login
+flask_mail
+
