@@ -1,13 +1,13 @@
-dnspython
+requests
 logging
 werkzeug
-flask
 sqlalchemy
+flask
 wtforms
-requests
+dnspython
 
+# app plugins
 flask_sqlalchemy
 flask_migrate
 flask_login
 flask_mail
-

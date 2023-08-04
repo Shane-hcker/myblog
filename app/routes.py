@@ -102,14 +102,17 @@ def profile_edit(username):
     if username != current_user.username:
         return render_template('errors/404.html')
 
-    if not (edit_form := forms.ProfileEditForm()).validate_on_submit():
+    if not (edit_form := forms.ProfileEditForm(username, email := current_user.email)).validate_on_submit():
         return render_template('user/pedit.html', edit_form=edit_form, flash_parse=flash_parse,
                                current_time=current_time(), username=username)
 
-    current_user.username = edit_form.username.data
-    current_user.email = edit_form.email.data
-    db.session.commit()
+    if edit_form.username.data != username:
+        current_user.username = edit_form.username.data
 
+    if edit_form.email.data != email:
+        current_user.email = edit_form.email.data
+
+    db.session.commit()
     flask.flash(success('successfully changed your profile!'))
     return flask.redirect(flask.url_for('profile_edit', username=current_user.username))
 

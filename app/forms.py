@@ -73,3 +73,22 @@ class ProfileEditForm(FlaskForm):
                         EmailValidator('invalid email', check_deliverability=True)])
     # description = TextAreaField(label='Your Description: ')
     submit = SubmitField(label='Confirm Changes')
+
+    def __init__(self, original_username, original_email, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.original_username = original_username
+        self.original_email = original_email
+
+    def validate_username(self, username):
+        if self.original_username == username:
+            return
+
+        if BlogUser.query.filter_by(username=username):
+            raise ValidationError('You need to have a unique username')
+
+    def validate_email(self, email):
+        if self.original_email == email:
+            return
+
+        if BlogUser.query.filter_by(email=email):
+            raise ValidationError('You need to have a unique email address')

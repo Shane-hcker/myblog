@@ -24,9 +24,6 @@ migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'  # resembles url_for
 
-mail = Mail(app)
-
-
 # Misc
 current_time = lambda: time.strftime('%Y-%m-%d %H:%M')
 success = lambda string: f'success;{string}'

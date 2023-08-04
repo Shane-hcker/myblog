@@ -2,14 +2,14 @@
 from typing import *
 from flask_mail import Message
 
-from . import app, db, mail
+from . import app, db
 from flask import render_template
 
 
-def handle_error(func):
-    def wrapper(*args, **kwargs):
-        ...
-    return wrapper
+# def handle_error(func):
+#     def wrapper(*args, **kwargs):
+#         ...
+#     return wrapper
 
 
 @app.errorhandler(404)
