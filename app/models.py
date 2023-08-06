@@ -3,6 +3,7 @@ import logging
 from typing import *
 from datetime import datetime
 from sqlalchemy import (VARCHAR, Integer, DateTime, Text, select, and_)
+from sqlalchemy.orm import backref
 
 # Plugins
 from flask_login import (UserMixin)
@@ -22,6 +23,14 @@ __all__ = ['BlogUser', 'Posts', 'retrieve_user']
 def retrieve_user(user_id):
     # primary key -> id
     return BlogUser.query.get(int(user_id))
+
+
+# creating association table
+followers = db.Table(
+    'followers',
+    Column('follower_id', Integer, ForeignKey('userdata.id')),
+    Column('followed_id', Integer, ForeignKey('userdata.id'))
+)
 
 
 class BlogUser(UserMixin, db.Model):  # One
@@ -46,6 +55,14 @@ class BlogUser(UserMixin, db.Model):  # One
 
     # backref --> field that's about to add to the `many` side(Posts)
     posts = db.relationship('Posts', backref='poster', lazy=True)
+
+    # setting up `followed`
+    followed = db.relationship(
+        'User', secondary=followers, lazy=True,
+        primaryjoin=(followers.c.follower_id == id),
+        secondaryjoin=(followers.c.followed_id == id),
+        backref=backref('followers', lazy=True),
+    )
 
     def avatar(self, size=100) -> str:
         with GravatarFetcher(self.email) as fetcher:
