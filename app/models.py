@@ -1,14 +1,16 @@
 # -*- encoding: utf-8 -*-
-import logging
-from functools import partial
 from typing import *
+from functools import partial
 from datetime import datetime
-from sqlalchemy import (VARCHAR, Integer, DateTime, String, Text, select, and_)
+import logging
+
+from sqlalchemy import (VARCHAR, Integer, DateTime, Text, select, and_)
 from sqlalchemy.orm import backref
 
 # Plugins
 from flask_login import (UserMixin)
 from flask_wtf import FlaskForm
+from flask_sqlalchemy.query import Query
 
 from app import db, login_manager, current_time, forEach
 from app.datatypes import *
@@ -35,25 +37,27 @@ followers = db.Table(
 
 
 class DBMixin:
-    @staticmethod
-    def flush() -> Type["DBMixin"]:
+    def flush(self) -> Self:
         db.session.flush()
-        return DBMixin
+        return self
 
-    @staticmethod
-    def commit() -> Type["DBMixin"]:
+    def commit(self) -> Self:
         db.session.commit()
-        return DBMixin
+        return self
 
-    @staticmethod
-    def add(instance: object, _warn: bool = True) -> Type["DBMixin"]:
+    def add(self, instance: object, _warn: bool = True) -> Self:
         db.session.add(instance, _warn)
-        return DBMixin
+        return self
 
-    @staticmethod
-    def add_all(instances: Iterable[object]) -> Type["DBMixin"]:
+    def add_all(self, instances: Iterable[object]) -> Self:
         db.session.add_all(instances)
-        return DBMixin
+        return self
+
+    def filter_by(self, *args, **kwargs) -> Query:
+        return self.query.filter_by(*args, **kwargs)
+
+    def get(self, *args, **kwargs) -> Self:
+        return self.query.get(*args, **kwargs)
 
 
 class BlogUser(UserMixin, DBMixin, db.Model):  # One
@@ -98,14 +102,6 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         self.commit()
 
     @staticmethod
-    def __parse_post(post: "Posts"):
-        return {
-            'author': post.poster.username,
-            'content': post.content,
-            'date': post.post_time
-        }
-
-    @staticmethod
     def fetch_all_users(*params) -> List[Dict[str, Any]]:
         """
         >>> BlogUser.fetch_all_users('username', ...)
@@ -133,14 +129,28 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
     def isUserValid(form: FlaskForm, user: "BlogUser") -> bool:
         return user and user.password.isHashOf(form.password.data) and user.email == form.email.data.strip()
 
+    @staticmethod
+    def __parse_post(post: "Posts"):
+        return {
+            'author': post.poster.username,
+            'content': post.content,
+            'date': post.post_time
+        }
+
     def check_pwd(self, other) -> bool:
         return self.password.isHashOf(other)
 
     def getUserPosts(self) -> List[Dict[str, Any]]:
         return forEach(Posts.query.filter_by(poster=self).all(), self.__parse_post)
 
-    def follows(self, users):
-        ...
+    def follows(self, *users):
+        """
+        >>> admin = BlogUser.get_uuser(id=1)
+        >>> admin.follows(user1, user2)
+        """
+        for user in users:
+            # TODO
+            ...
 
     def __str__(self) -> str:
         return f"BlogUser(username={self.username}, email={self.email})"
