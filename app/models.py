@@ -54,11 +54,12 @@ class BlogUser(UserMixin, db.Model):  # One
     # not an actual field in the table
 
     # backref --> field that's about to add to the `many` side(Posts)
+    # lazy --> not running until explicit queries
     posts = db.relationship('Posts', backref='poster', lazy=True)
 
-    # setting up `followed`
+    # setting up `followed` -> a list of user-subscribed users
     followed = db.relationship(
-        'User', secondary=followers, lazy=True,
+        'BlogUser', secondary=followers, lazy=True,
         primaryjoin=(followers.c.follower_id == id),
         secondaryjoin=(followers.c.followed_id == id),
         backref=backref('followers', lazy=True),
