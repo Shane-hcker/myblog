@@ -5,7 +5,12 @@ import hashlib
 from urllib.parse import urlencode
 
 
-__all__ = ['GravatarFetcher']
+__all__ = ['GravatarFetcher', 'default_avatar']
+
+
+def default_avatar(email, size=100) -> str:
+    with GravatarFetcher(email) as fetcher:
+        return fetcher.fetch(size).url
 
 
 class GravatarURL(str):

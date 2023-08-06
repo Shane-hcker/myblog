@@ -112,7 +112,7 @@ def profile_edit(username):
     if edit_form.email.data != email:
         current_user.email = edit_form.email.data
 
-    db.session.commit()
+    BlogUser.flush().commit()
     flask.flash(success('successfully changed your profile!'))
     return flask.redirect(flask.url_for('profile_edit', username=current_user.username))
 
@@ -143,9 +143,7 @@ def signup():
     new_user.username = reg_form.username.data
     new_user.password = SaltyPassword.saltify(reg_form.password.data)
 
-    db.session.add(new_user)
-    db.session.flush()
-    db.session.commit()
+    BlogUser.add(new_user).flush().commit()
 
     flask.flash(success('you successfully registered your account, please login...'))
     return flask.redirect(flask.url_for('login'))
