@@ -83,12 +83,12 @@ class ProfileEditForm(FlaskForm):
         if self.original_username == username.data:
             return
 
-        if BlogUser.query.filter_by(username=username):
+        if BlogUser().filter_by(username=username).all():
             raise ValidationError('You need to have a unique username')
 
     def validate_email(self, email: Field):
         if self.original_email == email.data:
             return
 
-        if BlogUser.query.filter_by(email=email):
+        if BlogUser().filter_by(email=email).all():
             raise ValidationError('You need to have a unique email address')

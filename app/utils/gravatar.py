@@ -34,7 +34,7 @@ class GravatarFetcher:
         query = {'s': size}
         query.update({'d': self.default}) if self.default else ...
         hashed = self.__hash_email(self.email)
-        self.url = GravatarURL(f'{self.__class__.URL}{hashed}/?{urlencode(query)}')
+        self.url = GravatarURL(f'{self.URL}{hashed}/?{urlencode(query)}')
         return self
 
     def __enter__(self):
@@ -51,3 +51,7 @@ class GravatarFetcher:
         return hashlib.md5(email.lower().encode()).hexdigest()
 
     __repr__ = __str__
+
+
+if __name__ == '__main__':
+    print(default_avatar('shanebilibili@outlook.com'))

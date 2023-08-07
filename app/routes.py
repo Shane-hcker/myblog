@@ -12,6 +12,7 @@ from app import app, forms, db, success, fail, forEach
 from app.models import *
 from app.security.saltypassword import *
 from app.security.check import check_valid_username
+from app.utils.gravatar import *
 
 
 render_template = partial(flask.render_template)
@@ -106,14 +107,20 @@ def profile_edit(username):
         return render_template('user/pedit.html', edit_form=edit_form, flash_parse=flash_parse,
                                current_time=current_time(), username=username)
 
+    changed = False
+
     if edit_form.username.data != username:
+        changed = True
         current_user.username = edit_form.username.data
 
     if edit_form.email.data != email:
+        changed = True
         current_user.email = edit_form.email.data
 
-    BlogUser().flush().commit()
-    flask.flash(success('successfully changed your profile!'))
+    if changed:
+        BlogUser().flush().commit()
+        flask.flash(success('successfully changed your profile!'))
+
     return flask.redirect(flask.url_for('profile_edit', username=current_user.username))
 
 
@@ -142,6 +149,9 @@ def signup():
     new_user.email = reg_form.email.data
     new_user.username = reg_form.username.data
     new_user.password = SaltyPassword.saltify(reg_form.password.data)
+
+    with GravatarFetcher(email=new_user.email) as fetcher:
+        new_user.avatar = fetcher.fetch(size=100).url
 
     BlogUser().add(new_user).flush().commit()
 

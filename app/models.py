@@ -13,9 +13,10 @@ from flask_wtf import FlaskForm
 from flask_sqlalchemy.query import Query
 
 from app import db, login_manager, current_time, forEach
-from app.datatypes import *
 from app.security.saltypassword import *
 from app.utils.gravatar import *
+from app.utils.mixins import *
+from app.datatypes import *
 
 
 __all__ = ['BlogUser', 'Posts', 'retrieve_user']
@@ -34,30 +35,6 @@ followers = db.Table(
     Column('follower_id', Integer, ForeignKey('userdata.id')),
     Column('following_id', Integer, ForeignKey('userdata.id'))
 )
-
-
-class DBMixin:
-    def flush(self) -> Self:
-        db.session.flush()
-        return self
-
-    def commit(self) -> Self:
-        db.session.commit()
-        return self
-
-    def add(self, instance: object, _warn: bool = True) -> Self:
-        db.session.add(instance, _warn)
-        return self
-
-    def add_all(self, instances: Iterable[object]) -> Self:
-        db.session.add_all(instances)
-        return self
-
-    def filter_by(self, *args, **kwargs) -> Query:
-        return self.query.filter_by(*args, **kwargs)
-
-    def get(self, *args, **kwargs) -> Self:
-        return self.query.get(*args, **kwargs)
 
 
 class BlogUser(UserMixin, DBMixin, db.Model):  # One
@@ -87,10 +64,11 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
 
     # setting up following
     following = db.relationship(
-        'BlogUser', secondary=followers, lazy=True,
+        'BlogUser', secondary=followers,
         primaryjoin=(followers.c.follower_id == id),
         secondaryjoin=(followers.c.following_id == id),
         backref=backref('followers', lazy=True),
+        lazy=True
     )
 
     def set_avatar(self, size=100, default=None) -> None:
@@ -102,9 +80,9 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         self.commit()
 
     @staticmethod
-    def fetch_all_users(*params) -> List[Dict[str, Any]]:
+    def get_all_users(*params) -> List[Dict[str, Any]]:
         """
-        >>> BlogUser.fetch_all_users('username', ...)
+        >>> BlogUser.get_all_users('username')
         """
         res = []
         for user in BlogUser.query.all():
@@ -125,12 +103,27 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         )
         return db.session.scalar(select(BlogUser).where(where_clause))
 
+    def follows(self, *users: Iterable["BlogUser"]) -> Self:
+        """
+        >>> admin = BlogUser.get_uuser(id=1)
+        >>> admin.follows(user1, user2)
+        """
+        [self.following.append(user) for user in users]
+        return self.commit()
+
+    def unfollows(self, *users: Iterable["BlogUser"]) -> Self:
+        [self.following.remove(user) for user in users]
+        return self.commit()
+
+    def is_following(self, user: "BlogUser") -> bool:
+        return user in self.following
+
     @staticmethod
     def isUserValid(form: FlaskForm, user: "BlogUser") -> bool:
         return user and user.password.isHashOf(form.password.data) and user.email == form.email.data.strip()
 
     @staticmethod
-    def __parse_post(post: "Posts"):
+    def __parse_post(post: "Posts") -> Dict[str, str]:
         return {
             'author': post.poster.username,
             'content': post.content,
@@ -142,15 +135,6 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
 
     def getUserPosts(self) -> List[Dict[str, Any]]:
         return forEach(Posts.query.filter_by(poster=self).all(), self.__parse_post)
-
-    def follows(self, *users):
-        """
-        >>> admin = BlogUser.get_uuser(id=1)
-        >>> admin.follows(user1, user2)
-        """
-        for user in users:
-            # TODO
-            ...
 
     def __str__(self) -> str:
         return f"BlogUser(username={self.username}, email={self.email})"
