@@ -70,6 +70,12 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         lazy=True
     )
 
+    def __init__(self, *, email, username, avatar=None, password=None):
+        self.email = email
+        self.username = username
+        self.avatar = avatar
+        self.password = password
+
     def set_avatar(self, size=100, default=None) -> None:
         with GravatarFetcher(self.email, default or 'mp') as fetcher:
             self.avatar = fetcher.fetch(size).url
