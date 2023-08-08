@@ -42,16 +42,16 @@
         {% if username == current_user.username %}
           <a href="{{ url_for('profile_edit', username=current_user.username) }}" class="tab">
             <div>
-              Edit Your Profile
+              Edit Profile
+            </div>
+          </a>
+
+          <a href="#" class="tab">
+            <div>
+              Account Security
             </div>
           </a>
         {% endif %}
-
-        <a href="#" class="tab">
-          <div>
-            Account Security
-          </div>
-        </a>
       </div>
     </td>
 

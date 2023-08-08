@@ -10,7 +10,6 @@ from sqlalchemy.orm import backref
 # Plugins
 from flask_login import (UserMixin)
 from flask_wtf import FlaskForm
-from flask_sqlalchemy.query import Query
 
 from app import db, login_manager, current_time, forEach
 from app.security.saltypassword import *
@@ -19,7 +18,7 @@ from app.utils.mixins import *
 from app.datatypes import *
 
 
-__all__ = ['BlogUser', 'Posts', 'retrieve_user']
+__all__ = ['BlogUser', 'Posts', 'retrieve_user', 'followers']
 
 
 # load user from session
@@ -98,10 +97,27 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
 
     @staticmethod
     def get_uuser(**kwargs) -> "BlogUser":
+        """
+        get unique user
+        """
         where_clause = and_(
             eval(f'BlogUser.{k} == \'{v}\'') for k, v in kwargs.items()
         )
         return db.session.scalar(select(BlogUser).where(where_clause))
+
+    def get_visible_posts(self):
+        """
+        obtains posts of the user and user-subscribed users
+        """
+        user_posts = self.get_user_posts()
+        return (
+            # join(association table, condition)
+            Posts()
+            .join(followers, followers.c.following_id == Posts.poster_id)
+            .filter(followers.c.follower_id == self.id)
+            .union(user_posts)
+            .order_by(Posts.post_time.desc())  # desc() -> column method
+        )
 
     def follows(self, *users: Iterable["BlogUser"]) -> Self:
         """
@@ -119,7 +135,7 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         return user in self.following
 
     @staticmethod
-    def isUserValid(form: FlaskForm, user: "BlogUser") -> bool:
+    def is_user_valid(form: FlaskForm, user: "BlogUser") -> bool:
         return user and user.password.isHashOf(form.password.data) and user.email == form.email.data.strip()
 
     @staticmethod
@@ -133,7 +149,7 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
     def check_pwd(self, other) -> bool:
         return self.password.isHashOf(other)
 
-    def getUserPosts(self) -> List[Dict[str, Any]]:
+    def get_user_posts(self) -> List[Dict[str, Any]]:
         return forEach(Posts.query.filter_by(poster=self).all(), self.__parse_post)
 
     def __str__(self) -> str:

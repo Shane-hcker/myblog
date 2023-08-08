@@ -1,8 +1,6 @@
 # -*- encoding: utf-8 -*-
 from typing import *
 
-from flask_sqlalchemy.query import Query
-
 from app import db
 
 
@@ -10,6 +8,9 @@ __all__ = ['DBMixin']
 
 
 class DBMixin:
+    def __getattr__(self, item):
+        return eval(f"self.query.{item}")
+
     def flush(self) -> Self:
         db.session.flush()
         return self
@@ -25,12 +26,3 @@ class DBMixin:
     def add_all(self, instances: Iterable[object]) -> Self:
         db.session.add_all(instances)
         return self
-
-    def filter_by(self, *args, **kwargs) -> Query:
-        return self.query.filter_by(*args, **kwargs)
-
-    def get(self, *args, **kwargs) -> object:
-        return self.query.get(*args, **kwargs)
-
-    def all(self) -> List[object]:
-        return self.query.all()

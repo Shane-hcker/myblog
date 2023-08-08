@@ -62,7 +62,7 @@ async def login() -> Any:
                                current_time=current_time(), flash_parse=flash_parse)
 
     logged_in_user = BlogUser.get_uuser(email=login_form.email.data, username=login_form.username.data)
-    if not BlogUser.isUserValid(login_form, logged_in_user):
+    if not BlogUser.is_user_valid(login_form, logged_in_user):
         flask.flash(fail('Invalid username or password'))
         return flask.redirect(flask.url_for('login'))
 
@@ -128,7 +128,7 @@ def profile_edit(username):
 @login_required
 @check_valid_username
 def user_posts(username):
-    posts = BlogUser.get_uuser(username=username).getUserPosts()
+    posts = BlogUser.get_uuser(username=username).get_user_posts()
     return render_template('user/user_posts.html', posts=posts, username=username,
                            current_time=current_time())
 
