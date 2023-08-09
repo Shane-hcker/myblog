@@ -153,7 +153,7 @@ def signup():
     with GravatarFetcher(email=new_user.email) as fetcher:
         new_user.avatar = fetcher.fetch(size=100).url
 
-    BlogUser().add(new_user).flush().commit()
+    BlogUser(False).add(new_user).flush().commit()
 
     flask.flash(success('you successfully registered your account, please login...'))
     return flask.redirect(flask.url_for('login'))

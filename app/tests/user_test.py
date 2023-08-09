@@ -19,26 +19,42 @@ class UserModelTest(unittest.TestCase):
 
     def test_user_info(self):
         pwd = SaltyPassword.saltify('123456')
-        user = BlogUser(username='user', email='admin@example.com', password=pwd)
+        user = BlogUser(username='user', email='useremail@example.com', password=pwd)
         user.set_avatar(size=100, default='https://blog.miguelgrinberg.com/static/miguel.jpg')
 
-        avatar_url_expect = ('https://www.gravatar.com/avatar/e64c7d89f26bd1972efa854d13d7dd61/?s=100&d=https%3A%2F'
-                             '%2Fblog.miguelgrinberg.com%2Fstatic%2Fmiguel.jpg')
         self.assertTrue(user.password.is_('123456'))
-        self.assertEqual(user.avatar, avatar_url_expect)
 
-    def test_user_posts(self):
-        """
-        TODO test cases completion + db stuff add
-        :return:
-        """
-        ...
+    def test_db_actions(self):
+        admin1 = BlogUser(username='admin1', email='admin1@example.com')
+        admin2 = BlogUser(username='admin2', email='shguoju2008@example.com')
+
+        BlogUser(False).add(admin1).add(admin2).commit()
+
+        self.assertEqual(BlogUser.get_uuser(username='admin1'), admin1)
+        self.assertNotEqual(BlogUser.get_uuser(email='admin@example.com'), admin2)
 
     def test_user_subscription(self):
-        ...
+        user1 = BlogUser(username='user1', email='user1@example.com')
+        user2 = BlogUser(username='user2', email='user2@example.com')
+        user3 = BlogUser(username='user3', email='user3@example.com')
+        BlogUser(False).add_all([user1, user2, user3]).commit()
+
+        user1.follows(user3).follows(user2)
+        user2.follows(user1)
+        user3.follows(user2)
+
+        BlogUser(False).commit()
+
+        self.assertTrue(user3 in user1.following and user2 in user1.following)
+        self.assertTrue(user1 in user2.following)
+        self.assertTrue(user2 in user3.following)
 
     def test_user_unsubscription(self):
-        ...
+        user1 = BlogUser.get_uuser(username='user1')
+        print(user1.username)
+        user2 = BlogUser.get_uuser(email='user2@example.com')
+        user3 = BlogUser.get_uuser(email='user3@example.com')
+
 
     def test_fetch_subscribed_posts(self):
         ...

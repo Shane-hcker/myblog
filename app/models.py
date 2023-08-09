@@ -47,9 +47,9 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
 
     # id -> UserMixin.get_id()
     id = Column(Integer, primary_key=True, autoincrement=True)
-    email = Column(VARCHAR(64), unique=True, nullable=False)
-    username = Column(VARCHAR(52), unique=True, nullable=False)
-    avatar = Column(VARCHAR(128), nullable=True, default=partial(default_avatar, email=email))
+    email = Column(VARCHAR(64), unique=True, nullable=True)
+    username = Column(VARCHAR(52), unique=True, nullable=True)
+    avatar = Column(VARCHAR(128), nullable=True)
     password: SaltyStr = Column(SaltyVarChar(102), nullable=True)
     recent_login = Column(DateTime, nullable=True, default=datetime.now)
 
@@ -70,15 +70,19 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         lazy=True
     )
 
-    def __init__(self, *, email, username, avatar=None, password=None):
+    def __init__(self, user=True, *, email=None, username=None, avatar=None, password=None):
+        if not user:
+            return
+
         self.email = email
         self.username = username
-        self.avatar = avatar
         self.password = password
+        self.avatar = avatar or default_avatar(email)
 
-    def set_avatar(self, size=100, default=None) -> None:
+    def set_avatar(self, size=100, default=None) -> str:
         with GravatarFetcher(self.email, default or 'mp') as fetcher:
             self.avatar = fetcher.fetch(size).url
+            return self.avatar
 
     def reset_recent_login(self):
         self.recent_login = current_time()
@@ -125,7 +129,7 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
             .order_by(Posts.post_time.desc())  # desc() -> column method
         )
 
-    def follows(self, *users: Iterable["BlogUser"]) -> Self:
+    def follows(self, *users: "BlogUser") -> Self:
         """
         >>> admin = BlogUser.get_uuser(id=1)
         >>> admin.follows(user1, user2)
@@ -133,7 +137,7 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         [self.following.append(user) for user in users]
         return self.commit()
 
-    def unfollows(self, *users: Iterable["BlogUser"]) -> Self:
+    def unfollows(self, *users: "BlogUser") -> Self:
         [self.following.remove(user) for user in users]
         return self.commit()
 
