@@ -49,16 +49,6 @@ class UserModelTest(unittest.TestCase):
         self.assertTrue(user1 in user2.following)
         self.assertTrue(user2 in user3.following)
 
-    def test_user_unsubscription(self):
-        user1 = BlogUser.get_uuser(username='user1')
-        print(user1.username)
-        user2 = BlogUser.get_uuser(email='user2@example.com')
-        user3 = BlogUser.get_uuser(email='user3@example.com')
-
-
-    def test_fetch_subscribed_posts(self):
-        ...
-
 
 if __name__ == '__main__':
     unittest.main()
