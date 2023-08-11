@@ -5,6 +5,7 @@ sqlalchemy
 flask
 wtforms
 dnspython
+alembic
 
 # app plugins
 flask_sqlalchemy

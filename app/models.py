@@ -88,14 +88,20 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         self.recent_login = current_time()
         self.commit()
 
+    @classmethod
+    def add_user(cls, *args, **kwargs) -> "BlogUser":
+        return cls(*args, **kwargs)
+
     @staticmethod
     def get_all_users(*params) -> List[Dict[str, Any]]:
         """
         >>> BlogUser.get_all_users('username')
         """
+        if '*' in params:
+            return BlogUser(False).all()
         res = []
-        for user in BlogUser.query.all():
-            user_dict = {}
+        for user in BlogUser(False).all():
+            user_dict = dict()
             for p in params:
                 try:
                     user_dict.update({p: eval(f'user.{p}')})
@@ -129,16 +135,20 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
             .order_by(Posts.post_time.desc())  # desc() -> column method
         )
 
-    def follows(self, *users: "BlogUser") -> Self:
+    def follows(self, *users: "BlogUser", autocommit=True) -> Self:
         """
         >>> admin = BlogUser.get_uuser(id=1)
         >>> admin.follows(user1, user2)
         """
-        [self.following.append(user) for user in users]
+        [self.following.append(user) for user in users if not self.is_following(user)]
+
+        if not autocommit:
+            return self
+
         return self.commit()
 
     def unfollows(self, *users: "BlogUser") -> Self:
-        [self.following.remove(user) for user in users]
+        [self.following.remove(user) for user in users if self.is_following(user)]
         return self.commit()
 
     def is_following(self, user: "BlogUser") -> bool:
