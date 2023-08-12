@@ -12,8 +12,8 @@
   {% for post in posts %}
     <div class="post">
       <p>
-        <b>{{post.author}}</b> at
-        <i>{{post.date}}</i>: {{post.content}}
+        <b>{{post.poster.username}}</b> at
+        <i>{{post.post_time}}</i>: {{post.content}}
       </p>
     </div>
   {% endfor %}

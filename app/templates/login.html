@@ -37,9 +37,27 @@
       {{ login_form.remember.label }}
     </div>
     {{ login_form.login() }}
+    {% if is_debug %}
+      <script>
+          function autofill() {
+              let username = document.getElementById('username')
+              let email = document.getElementById('email')
+              let password = document.getElementById('password')
+              email.value = 'shanebilibili@outlook.com'
+              username.value = 'admin'
+              password.value = 'china666'
+
+              document.getElementById('remember').click()
+              document.getElementById('login').click()
+          }
+      </script>
+      <button onclick="autofill()" style="margin-left: 10px">
+        Auto Fill
+      </button>
+    {% endif %}
   </form>
   Don't have an account?
-  <a href="{{url_for('signup')}}">Sign Up</a>
+  <a href="{{ url_for('signup') }}">Sign Up</a>
 
   {% with get_flash = get_flashed_messages() %}
     {% for msg in flash_parse(get_flash) %}
