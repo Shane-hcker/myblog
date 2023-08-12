@@ -3,7 +3,7 @@ from typing import *
 from app import app
 
 
-def __del__(self):
+def __del__(self) -> None:
     self.app_context.pop()
 
 

@@ -22,24 +22,19 @@ current_time = lambda: time.strftime('%Y-%m-%d %H:%M')
 def getAllPosts() -> List[Dict[str, Any]]:
     return [
         {
-            'author': post.poster.username,
+            'poster': post.poster.username,
             'content': post.content,
-            'date': post.post_time,
-        } for post in Posts.query.all()
-    ]
-
-
-def __parse_flash(msg: str) -> List[str]:
-    return [
-        'success' if (msg_ := msg.split(';'))[0] == 'success'
-        else 'error', msg_[-1]
+            'post_time': post.post_time,
+        } for post in Posts().all()
     ]
 
 
 def flash_parse(flash_messages) -> Optional[List[str]]:
-    if not flash_messages:
-        return []
-    return forEach(flash_messages, __parse_flash, ret_val=True)
+    parse = lambda msg: [
+        'success' if (msg_ := msg.split(';'))[0] == 'success'
+        else 'error', msg_[-1]
+    ]
+    return forEach(flash_messages, parse, ret_val=True) if flash_messages else []
 
 
 @app.route('/')
@@ -47,19 +42,19 @@ def flash_parse(flash_messages) -> Optional[List[str]]:
 @login_required
 def home():
     # the chosen path name for templates: templates
-    return render_template('home.html', route='Home', posts=getAllPosts(),
+    return render_template('home.html', route='Home', posts=current_user.get_visible_posts(),
                            current_time=current_time(), flash_parse=flash_parse)
 
 
 @app.route('/login', methods=['GET', 'POST'])
-async def login() -> Any:
+def login() -> Any:
     if current_user.is_authenticated:
         return flask.redirect(flask.url_for('home'))
 
     # True |> POST + (validators -> true)
     if not (login_form := forms.UserLoginForm()).validate_on_submit():
         return render_template('login.html', login_form=login_form, route='Sign In',
-                               current_time=current_time(), flash_parse=flash_parse)
+                               current_time=current_time(), flash_parse=flash_parse, is_debug=app.debug)
 
     logged_in_user = BlogUser.get_uuser(email=login_form.email.data, username=login_form.username.data)
     if not BlogUser.is_user_valid(login_form, logged_in_user):

@@ -95,10 +95,14 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
     @staticmethod
     def get_all_users(*params) -> List[Dict[str, Any]]:
         """
+        >>> BlogUser.get_all_users('*')
+        [BlogUser(username=..., email=...), ...]
         >>> BlogUser.get_all_users('username')
+        [{username: 'username'}, ...]
         """
         if '*' in params:
             return BlogUser(False).all()
+
         res = []
         for user in BlogUser(False).all():
             user_dict = dict()
@@ -125,11 +129,11 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         """
         obtains posts of the user and user-subscribed users
         """
-        user_posts = self.get_user_posts()
+        user_posts = self.get_user_posts(raw=True)
         return (
             # join(association table, condition)
-            Posts()
-            .join(followers, followers.c.following_id == Posts.poster_id)
+            Posts.query
+            .join(followers, (followers.c.following_id == Posts.poster_id))
             .filter(followers.c.follower_id == self.id)
             .union(user_posts)
             .order_by(Posts.post_time.desc())  # desc() -> column method
@@ -147,8 +151,12 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
 
         return self.commit()
 
-    def unfollows(self, *users: "BlogUser") -> Self:
+    def unfollows(self, *users: "BlogUser", autocommit=True) -> Self:
         [self.following.remove(user) for user in users if self.is_following(user)]
+
+        if not autocommit:
+            return self
+
         return self.commit()
 
     def is_following(self, user: "BlogUser") -> bool:
@@ -169,8 +177,12 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
     def check_pwd(self, other) -> bool:
         return self.password.isHashOf(other)
 
-    def get_user_posts(self) -> List[Dict[str, Any]]:
-        return forEach(Posts.query.filter_by(poster=self).all(), self.__parse_post)
+    def get_user_posts(self, raw=False) -> List[Dict[str, Any]]:
+        return Posts().filter_by(poster=self) if raw else (
+            forEach(
+                Posts().filter_by(poster=self).all(), self.__parse_post
+            )
+        )
 
     def __str__(self) -> str:
         return f"BlogUser(username={self.username}, email={self.email})"
