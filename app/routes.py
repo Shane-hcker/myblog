@@ -10,9 +10,12 @@ from flask_login import (login_user, current_user, logout_user, login_required)
 
 from app import app, db, forms, success, fail
 from app.models import *
+
 from app.security.saltypassword import *
 from app.security.check import check_valid_username
+
 from app.utils.gravatar import *
+from app.utils.misc import *
 
 
 render_template = partial(flask.render_template)

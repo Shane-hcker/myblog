@@ -28,7 +28,7 @@ def check_valid_username(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         username = kwargs['username']
-        name_list = [user['username'] for user in BlogUser.get_all_users('username')]
+        name_list = [user.get('username') for user in BlogUser.get_all_users('username')]
         if username in name_list:
             return func(*args, **kwargs)
         return flask.redirect('errors/404.html')

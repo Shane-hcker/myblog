@@ -4,11 +4,11 @@ from functools import partial
 from datetime import datetime
 import logging
 
-from sqlalchemy import (VARCHAR, Integer, DateTime, Text, select, and_)
+from sqlalchemy import VARCHAR, Integer, DateTime, Text, select, and_
 from sqlalchemy.orm import backref
 
 # Plugins
-from flask_login import (UserMixin)
+from flask_login import UserMixin
 from flask_wtf import FlaskForm
 
 from app import db, login_manager, current_time, forEach
@@ -25,7 +25,7 @@ __all__ = ['BlogUser', 'Posts', 'retrieve_user', 'followers']
 @login_manager.user_loader
 def retrieve_user(user_id):
     # primary key -> id
-    return BlogUser.query.get(int(user_id))
+    return BlogUser(False).get(int(user_id))
 
 
 # creating association table

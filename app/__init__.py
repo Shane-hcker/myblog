@@ -47,7 +47,7 @@ def add_handler_immediate() -> None:
         return
 
     username, pwd = app.config.get('MAIL_USERNAME'), app.config.get('MAIL_PASSWORD')
-    cred = (username, pwd) if username or pwd else None
+    cred: Tuple[str, str] = (username, pwd) if username or pwd else None
     secure = () if app.config.get('MAIL_USE_SSL') else None
 
     mail_handler = SMTPHandler(

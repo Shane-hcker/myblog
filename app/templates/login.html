@@ -39,17 +39,17 @@
     {{ login_form.login() }}
     {% if is_debug %}
       <script>
-          function autofill() {
-              let username = document.getElementById('username')
-              let email = document.getElementById('email')
-              let password = document.getElementById('password')
-              email.value = 'shanebilibili@outlook.com'
-              username.value = 'admin'
-              password.value = 'china666'
+        function autofill() {
+            let username = document.getElementById('username')
+            let email = document.getElementById('email')
+            let password = document.getElementById('password')
+            email.value = 'shanebilibili@outlook.com'
+            username.value = 'admin'
+            password.value = 'china666'
 
-              document.getElementById('remember').click()
-              document.getElementById('login').click()
-          }
+            document.getElementById('remember').click()
+            document.getElementById('login').click()
+        }
       </script>
       <button onclick="autofill()" style="margin-left: 10px">
         Auto Fill

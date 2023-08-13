@@ -84,13 +84,10 @@
   margin-left: 30px;
 }
 
-.userinfo, .my_posts {
+.my_posts {
   margin-top: 10px;
 }
 
-.userinfo > h1, .userinfo > h2, .userinfo > img {
-  display: inline-block;
-}
 
 .pedit { }
 
