@@ -8,7 +8,7 @@ import flask
 # Plugins
 from flask_login import (login_user, current_user, logout_user, login_required)
 
-from app import app, forms, db, success, fail, forEach
+from app import app, db, forms, success, fail
 from app.models import *
 from app.security.saltypassword import *
 from app.security.check import check_valid_username
@@ -17,24 +17,6 @@ from app.utils.gravatar import *
 
 render_template = partial(flask.render_template)
 current_time = lambda: time.strftime('%Y-%m-%d %H:%M')
-
-
-def getAllPosts() -> List[Dict[str, Any]]:
-    return [
-        {
-            'poster': post.poster.username,
-            'content': post.content,
-            'post_time': post.post_time,
-        } for post in Posts().all()
-    ]
-
-
-def flash_parse(flash_messages) -> Optional[List[str]]:
-    parse = lambda msg: [
-        'success' if (msg_ := msg.split(';'))[0] == 'success'
-        else 'error', msg_[-1]
-    ]
-    return forEach(flash_messages, parse, ret_val=True) if flash_messages else []
 
 
 @app.route('/')

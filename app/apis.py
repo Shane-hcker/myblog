@@ -1,7 +1,5 @@
 # -*- encoding: utf-8 -*-
 from typing import *
-import json
-import requests
 
 from flask_restful import Resource, reqparse
 
@@ -16,23 +14,26 @@ class Follow(Resource):
     """
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+
         self.parser = reqparse.RequestParser()
         self.parser.add_argument('username', type=str, location='form')
         self.parser.add_argument('email', type=str, location='form')
-    
-    # @staticmethod
-    # def status(status: int, reason='') -> Dict[str, Any]:
-    #     return {
-    #         'status': status, 
-    #         'reason': reason
-    #     }
+
+    @staticmethod
+    def response_msg(success: bool) -> Dict[str, Any]:
+        return {
+            'success': success
+        }
 
     def post(self) -> Dict[str, Any]:
-        args = self.parser.parse_args()
-        print(args)
+        data_args = self.parser.parse_args()
+        keys = data_args.keys()
+        [data_args.pop(k) for k in keys if not data_args.get(k)]
+        target_user = BlogUser.get_uuser(**data_args)
+
         return {
-            'status': 200, 
-            'reason': 'OK'
+            'target': str(target_user), 
+            'message': self.response_msg(success=True)
         }
 
 
