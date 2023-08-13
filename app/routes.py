@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*-
-from typing import *
 import time
 from functools import partial
 from urllib.parse import urlsplit
@@ -8,11 +7,10 @@ import flask
 # Plugins
 from flask_login import (login_user, current_user, logout_user, login_required)
 
-from app import app, db, forms, success, fail
-from app.models import *
+from app import app, forms, success, fail
 
-from app.security.saltypassword import *
-from app.security.check import check_valid_username
+from app.utils.saltypassword import *
+from app.utils.check import check_valid_username
 
 from app.utils.gravatar import *
 from app.utils.misc import *

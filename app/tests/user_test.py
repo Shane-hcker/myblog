@@ -2,7 +2,7 @@
 import unittest
 
 from app import db, app
-from app.security.saltypassword import *
+from app.utils.saltypassword import *
 from app.models import *
 
 

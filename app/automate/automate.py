@@ -1,10 +1,9 @@
 # -*- encoding: utf-8 -*-
-from typing import *
 import random
 
 from context import *
 from app.models import *
-from app.security.saltypassword import *
+from app.utils.saltypassword import *
 
 
 chr_type = [

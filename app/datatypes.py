@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 from typing import *
 from sqlalchemy import TypeDecorator, VARCHAR
-from app.security.saltypassword import SaltyPassword
+from app.utils.saltypassword import SaltyPassword
 from app import db
 
 __all__ = ['SaltyVarChar', 'Column', 'ForeignKey']

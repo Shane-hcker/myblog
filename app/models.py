@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 from typing import *
-from functools import partial
 from datetime import datetime
 import logging
 
@@ -12,7 +11,7 @@ from flask_login import UserMixin
 from flask_wtf import FlaskForm
 
 from app import db, login_manager, current_time, forEach
-from app.security.saltypassword import *
+from app.utils.saltypassword import *
 from app.utils.gravatar import *
 from app.utils.mixins import *
 from app.datatypes import *
