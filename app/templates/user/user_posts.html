@@ -2,9 +2,15 @@
 
 {% block content %}
   <div class="my_posts">
-    <h1>
-      My Posts on this blog:
-    </h1>
+    {% if username == current_user.username %}
+      <h1>
+        My Posts on this blog:
+      </h1>
+    {% else %}
+      <h1>
+        {{ username }}'s Posts on this blog:
+      </h1>
+    {% endif %}
     <hr>
     {% if posts %}
       {% for post in posts %}

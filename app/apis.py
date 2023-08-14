@@ -1,7 +1,9 @@
 # -*- encoding: utf-8 -*-
 from typing import *
+import flask
 
 from flask_restful import Resource, reqparse
+from flask_login import current_user, login_required
 
 from app import api
 from app.models import BlogUser
@@ -21,42 +23,60 @@ class Follow(Resource):
         resp_json.update({f'{k}': v for k, v in kwargs.items()})
         return resp_json
 
-    def parse_valid_args(self):
-        args = self.parser.parse_args()
+    @staticmethod
+    def parse_valid_args(parser):
+        args = parser.parse_args()
         keys = args.keys()
         [args.pop(k) for k in keys if not args.get(k)]
         return args
 
+    @login_required
+    def get(self):
+        return {
+            'user': None
+        }
+
+    @login_required
     def delete(self):
         """
         /follow DELETE
         form data: {'username': ..., 'email': ...}
         """
         target_user = BlogUser.get_uuser(**self.parse_valid_args())
-        message = self.json_response(
+        response = self.json_response(
             success=True,
             unfollowed=True
         )
         return {
-            'target': target_user,
-            'message': message
+            'following': target_user,
+            'response': response
         }
 
+    @login_required
     def post(self) -> Dict[str, Any]:
         """
         /follow POST
         form data: {'username': ..., 'email': ...}
         """
-        target_user = BlogUser.get_uuser(**self.parse_valid_args())
+        if not (args := self.parse_valid_args(self.parser)):
+            return {
+                'following': None,
+                'response': self.json_response(
+                    success=False,
+                    message='Missing `username` or `email` in form data'
+                )
+            }
 
-        message = self.json_response(
+        target_user = BlogUser.get_uuser(**args)
+
+        response = self.json_response(
             success=True,
-            followed=True
+            message=f'successfully followed: {str(target_user)}'
         )
 
         return {
-            'target': str(target_user), 
-            'message': message
+            'following': str(target_user),
+            'response': response
         }
 
 

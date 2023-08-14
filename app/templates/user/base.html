@@ -27,13 +27,13 @@
   <tr>
     <td>
       <div class="sidebar">
-        <a href="{{ url_for('profile', username=current_user.username) }}" class="tab">
+        <a href="{{ url_for('profile', username=username) }}" class="tab">
           <div>
             Profile
           </div>
         </a>
 
-        <a href="{{ url_for('user_posts', username=current_user.username) }}" class="tab">
+        <a href="{{ url_for('user_posts', username=username) }}" class="tab">
           <div>
             Posts
           </div>

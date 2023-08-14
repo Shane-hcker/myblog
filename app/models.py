@@ -7,7 +7,7 @@ from sqlalchemy import VARCHAR, Integer, DateTime, Text, select, and_
 from sqlalchemy.orm import backref
 
 # Plugins
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 from flask_wtf import FlaskForm
 
 from app import db, login_manager, current_time, forEach
@@ -167,8 +167,9 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
 
     @staticmethod
     def __parse_post(post: "Posts") -> Dict[str, str]:
+        username = post.poster.username
         return {
-            'author': post.poster.username,
+            'author': f'{username}(me)' if current_user.username == username else username,
             'content': post.content,
             'date': post.post_time
         }

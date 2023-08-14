@@ -2,11 +2,13 @@
 
 {% block content %}
   <div class="userinfo">&nbsp;&nbsp;
-    <h1>My Profile:&nbsp;</h1>
-  </div>
-  <hr>
-  <br>
-  <div>
+    {% if username == current_user.username %}
+      <h1>My Profile:&nbsp;</h1>
+    {% else %}
+      <h1>{{ username }}'s Profile: </h1>
+    {% endif %}
+    <hr>
+    <br>
     <img src="{{ current_user.avatar }}" height="50" alt="{{ user.avatar }}"> <br>
     <strong>Username: </strong>{{ username }} <br>
     <strong>Email: </strong>{{ user.email }} <br>

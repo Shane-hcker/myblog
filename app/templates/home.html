@@ -12,7 +12,12 @@
   {% for post in posts %}
     <div class="post">
       <p>
-        <b>{{post.poster.username}}</b> at
+        <b>
+          {{ post.poster.username }}
+          {% if post.poster.username == current_user.username %}
+            (You)
+          {% endif %}
+        </b> at
         <i>{{post.post_time}}</i>: {{post.content}}
       </p>
     </div>

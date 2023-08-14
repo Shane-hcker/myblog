@@ -1,11 +1,12 @@
 # -*- encoding: utf-8 -*-
+from typing import *
 import time
 from functools import partial
 from urllib.parse import urlsplit
 import flask
 
 # Plugins
-from flask_login import (login_user, current_user, logout_user, login_required)
+from flask_login import (login_user, logout_user, login_required, current_user)
 
 from app import app, forms, success, fail
 

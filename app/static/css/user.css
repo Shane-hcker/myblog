@@ -37,12 +37,6 @@
   background-color: ghostwhite;
 }
 
-.sidebar {
-  width: 170px;
-  border-radius: 7px;
-  box-shadow: 6px 0 15px rgb(0, 0, 0, .5);
-}
-
 .tab {
   color: black;
   text-decoration: none;
@@ -52,8 +46,13 @@
   font-weight: bold;
 }
 
+.sidebar {
+  width: 170px;
+  border-radius: 7px;
+  box-shadow: 6px 0 15px rgb(0, 0, 0, .5);
+}
+
 .sidebar, .content {
-  display: inline-block;
   overflow: hidden;
   height: 100%;
 }
@@ -67,16 +66,17 @@
   border-bottom: 2px solid grey;
 }
 
-.error {
-  color: red;
+.error, .success {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 16px;
 }
 
+.error {
+  color: red;
+}
+
 .success {
   color: green;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 16px;
 }
 
 .content {
@@ -85,11 +85,8 @@
 }
 
 .my_posts {
-  margin-top: 10px;
+  margin-top: 18px;
 }
-
-
-.pedit { }
 
 .edit_label {
   font-weight: bold;
