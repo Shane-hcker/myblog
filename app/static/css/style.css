@@ -55,3 +55,7 @@
 .post {
   margin-left: 10px;
 }
+
+.post-content {
+  display: inline-block;
+}

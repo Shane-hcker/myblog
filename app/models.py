@@ -10,7 +10,7 @@ from sqlalchemy.orm import backref
 from flask_login import UserMixin, current_user
 from flask_wtf import FlaskForm
 
-from app import db, login_manager, current_time, forEach
+from app import db, login_manager, current_time
 from app.utils.saltypassword import *
 from app.utils.gravatar import *
 from app.utils.mixins import *
@@ -78,7 +78,7 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         self.password = password
         self.avatar = avatar or default_avatar(email)
 
-    def set_avatar(self, size=100, default=None) -> str:
+    def set_avatar(self, size=None, default=None) -> str:
         with GravatarFetcher(self.email, default or 'mp') as fetcher:
             self.avatar = fetcher.fetch(size).url
             return self.avatar
@@ -93,16 +93,15 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
 
     @staticmethod
     def get_all_users(*params) -> List[Dict[str, Any]]:
-        """
-        >>> BlogUser.get_all_users('*')
+        """ Mem efficient
+        >>> list(BlogUser.get_all_users('*'))
         [BlogUser(username=..., email=...), ...]
-        >>> BlogUser.get_all_users('username')
+        >>> list(BlogUser.get_all_users('username'))
         [{username: 'username'}, ...]
         """
         if '*' in params:
-            return BlogUser(False).all()
+            return (yield from BlogUser(False).all())
 
-        res = []
         for user in BlogUser(False).all():
             user_dict = dict()
             for p in params:
@@ -111,8 +110,7 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
                 except Exception as e:
                     logging.error(e)
                     continue
-            res.append(user_dict)
-        return res
+            yield user_dict
 
     @staticmethod
     def get_uuser(**kwargs) -> "BlogUser":
@@ -128,8 +126,8 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         """
         obtains posts of the user and user-subscribed users
         """
-        user_posts = self.get_user_posts(raw=True)
-        return (
+        user_posts = next(self.get_user_posts(raw=True))
+        yield from (
             # join(association table, condition)
             Posts.query
             .join(followers, (followers.c.following_id == Posts.poster_id))
@@ -167,9 +165,8 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
 
     @staticmethod
     def __parse_post(post: "Posts") -> Dict[str, str]:
-        username = post.poster.username
         return {
-            'author': f'{username}(me)' if current_user.username == username else username,
+            'poster': post.poster.username,
             'content': post.content,
             'date': post.post_time
         }
@@ -177,12 +174,13 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
     def check_pwd(self, other) -> bool:
         return self.password.isHashOf(other)
 
-    def get_user_posts(self, raw=False) -> List[Dict[str, Any]]:
-        return Posts().filter_by(poster=self) if raw else (
-            forEach(
-                Posts().filter_by(poster=self).all(), self.__parse_post
+    def get_user_posts(self, raw=False):
+        if raw:
+            yield Posts().filter_by(poster=self)
+        else:
+            yield from map(self.__parse_post,
+                Posts().filter_by(poster=self).all()
             )
-        )
 
     def __str__(self) -> str:
         return f"BlogUser(username={self.username}, email={self.email})"

@@ -53,11 +53,20 @@ class Follow(Resource):
         }
 
     @login_required
-    def post(self) -> Dict[str, Any]:
+    def post(self, username) -> Dict[str, Any]:
         """
         /follow POST
         form data: {'username': ..., 'email': ...}
         """
+        if current_user.username != username:
+            return {
+                'following': None,
+                'response': self.json_response(
+                    success=False,
+                    message='You are not allowed to do that'
+                )
+            }
+
         if not (args := self.parse_valid_args(self.parser)):
             return {
                 'following': None,

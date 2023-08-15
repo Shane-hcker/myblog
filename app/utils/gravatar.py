@@ -30,8 +30,8 @@ class GravatarFetcher:
     def __str__(self) -> str:
         return self.url
 
-    def fetch(self, size=10) -> Self:
-        query = {'s': size}
+    def fetch(self, size=None) -> Self:
+        query = {'s': size or 50}
         query.update({'d': self.default}) if self.default else ...
         hashed = self.__hash_email(self.email)
         self.url = GravatarURL(f'{self.URL}{hashed}/?{urlencode(query)}')
