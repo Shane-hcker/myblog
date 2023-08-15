@@ -54,6 +54,7 @@
 
 .post {
   margin-left: 10px;
+  -webkit-border-vertical-spacing: 20px;
 }
 
 .post-content {
