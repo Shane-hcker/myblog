@@ -120,6 +120,9 @@ def logout():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    if current_user.is_authenticated:
+        return flask.redirect(flask.url_for('home'))
+
     if not (reg_form := forms.UserRegForm()).validate_on_submit():
         return render_template('signup.html', reg_form=reg_form, route='Sign Up', flash_parse=flash_parse,
                                current_time=current_time())

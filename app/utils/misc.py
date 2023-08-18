@@ -1,6 +1,10 @@
 # -*- encoding: utf-8 -*-
 from typing import *
 
+import flask
+from requests import post as rpost, delete as rdelete
+from flask_login import current_user
+
 from app.models import Posts, BlogUser
 
 

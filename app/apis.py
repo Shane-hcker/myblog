@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 from typing import *
+from abc import ABCMeta, abstractmethod
 import flask
 
 from flask_restful import Resource, reqparse
@@ -9,7 +10,18 @@ from app import api
 from app.models import BlogUser
 
 
-class Follow(Resource):
+class UserRelationAPI(Resource, metaclass=ABCMeta):
+    @abstractmethod
+    def get(self) -> None: pass
+
+    @abstractmethod
+    def post(self) -> None: pass
+
+    @abstractmethod
+    def delete(self) -> None: pass
+
+
+class Following(UserRelationAPI):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
@@ -17,76 +29,99 @@ class Follow(Resource):
         self.parser.add_argument('username', type=str, location='form')
         self.parser.add_argument('email', type=str, location='form')
 
-    @staticmethod
-    def json_response(success: bool, **kwargs) -> Dict[str, Any]:
-        resp_json = {'success': success}
-        resp_json.update({f'{k}': v for k, v in kwargs.items()})
-        return resp_json
-
-    @staticmethod
-    def parse_valid_args(parser):
-        args = parser.parse_args()
-        keys = args.keys()
-        [args.pop(k) for k in keys if not args.get(k)]
-        return args
+    @login_required
+    def get(self, username):
+        if current_user.username != username:
+            return self.error_405()
 
     @login_required
-    def get(self):
-        return {
-            'user': None
-        }
-
-    @login_required
-    def delete(self):
+    def delete(self, username):
         """
         /follow DELETE
         form data: {'username': ..., 'email': ...}
         """
-        target_user = BlogUser.get_uuser(**self.parse_valid_args())
-        response = self.json_response(
-            success=True,
-            unfollowed=True
-        )
+        if current_user.username != username:
+            return self.error_405()
+
+        if not (data := self.parse_valid_args()):
+            return self.error_400()
+
+        if not current_user.is_following(target_user := BlogUser.get_uuser(**data)):
+            return {
+                'status': 200,
+                'reason': 'OK',
+                'message': f'Already followed {target_user}'
+            }
+
+        current_user.unfollows(target_user)
+
         return {
-            'following': target_user,
-            'response': response
+            'status': 200,
+            'reason': 'OK',
+            'message': f'Unfollowed {target_user}'
         }
 
     @login_required
-    def post(self, username) -> Dict[str, Any]:
+    def post(self, username, **data) -> Dict[str, Any]:
         """
         /follow POST
         form data: {'username': ..., 'email': ...}
         """
         if current_user.username != username:
+            return self.error_405()
+
+        if not (data := self.parse_valid_args()):
+            return self.error_400()
+
+        target_user = BlogUser.get_uuser(**data)
+
+        if current_user.is_following(target_user):
             return {
-                'following': None,
-                'response': self.json_response(
-                    success=False,
-                    message='You are not allowed to do that'
-                )
+                'status': 200,
+                'reason': 'OK',
+                'message': f'Already followed {target_user}'
             }
 
-        if not (args := self.parse_valid_args(self.parser)):
-            return {
-                'following': None,
-                'response': self.json_response(
-                    success=False,
-                    message='Missing `username` or `email` in form data'
-                )
-            }
-
-        target_user = BlogUser.get_uuser(**args)
-
-        response = self.json_response(
-            success=True,
-            message=f'successfully followed: {str(target_user)}'
-        )
+        current_user.follows(target_user)
 
         return {
-            'following': str(target_user),
-            'response': response
+            'status': 200,
+            'reason': 'OK',
+            'message': f'Followed {str(target_user)}'
         }
 
+    @staticmethod
+    def error_400():
+        return {
+            "status": 400,
+            "reason": 'Missing parameters',
+            'message': None
+        }
 
-api.add_resource(Follow, '/follow')
+    @staticmethod
+    def error_405():
+        return {
+            'status': 405,
+            'reason': 'You are not allowed to do that',
+            'message': None
+        }
+
+    def parse_valid_args(self, parser=None):
+        parser = parser or self.parser
+        args = parser.parse_args()
+        args = self.noneless_dict(args)
+        return args
+
+    @staticmethod
+    def noneless_dict(d: dict):
+        keys = d.keys()
+        [d.pop(k) for k in keys if not d.get(k)]
+        return d
+
+
+class Follower(UserRelationAPI):
+    pass
+
+
+# api.add_resource(Follower, '/<username>/follower', endpoint='follower')
+api.add_resource(Following, '/<username>/following', endpoint='following')

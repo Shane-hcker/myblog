@@ -28,7 +28,7 @@ class EmailValidator(Email):
 class UserForm(FlaskForm):
     email = StringField('Your Email:', validators=[DataRequired(),
                         EmailValidator('Invalid Email', check_deliverability=True)])
-    username = StringField('Your Username:', validators=[DataRequired(), Length(min=4, max=52)])
+    username = StringField('Your Username:', validators=[DataRequired(), Length(min=4, max=32)])
     password = PasswordField('Your Password:', validators=[DataRequired(), Length(min=8)])
     # recaptcha = RecaptchaField()
 
@@ -68,7 +68,7 @@ class UserRegForm(UserForm):
 
 class ProfileEditForm(FlaskForm):
     avatar = FileField(label='Upload Your new avatar')
-    username = StringField(label='Your Username', validators=[DataRequired(), Length(min=4, max=52)])
+    username = StringField(label='Your Username', validators=[DataRequired(), Length(min=4, max=32)])
     email = StringField(label='Your Email: ', validators=[DataRequired(), Length(min=8),
                         EmailValidator('invalid email', check_deliverability=True)])
     # description = TextAreaField(label='Your Description: ')

@@ -39,22 +39,42 @@
 }
 
 .error {
-  color: red;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 16px;
+  color: red;
 }
 
 
 .success {
-  color: green;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 16px;
+  color: green;
 }
 
 
 .post {
-  margin-left: 10px;
   -webkit-border-vertical-spacing: 20px;
+  margin-left: 10px;
+}
+
+.button-following {
+  background-color: dodgerblue;
+  margin-top: 5px;
+  height: 25px;
+  width: 70px;
+  border: none;
+  border-radius: 3px;
+
+  font-size: 15px;
+  text-align: center;
+  color: white;
+}
+
+.avatar-box {
+  height: 70px;
+  width: 70px;
+  overflow: hidden;
+  border-radius: 5px;
 }
 
 .post-content {
