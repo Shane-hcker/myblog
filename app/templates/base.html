@@ -12,19 +12,6 @@
     {% endif %}
   </title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  {% if current_user.is_authenticated %}
-    <script>
-      function doFollow(username, email) {
-          return null;
-      }
-
-      function doUnfollow() {
-          var res = '{{ redirect_unfollow() }}';
-          return null;
-      }
-    </script>
-  {% endif %}
-
 </head>
 <body>
   <header class="nav">

@@ -9,7 +9,11 @@
     {% endif %}
     <hr>
     <br>
-    <img src="{{ current_user.avatar }}" height="50" alt="{{ user.avatar }}"> <br>
+    <img src="{{ current_user.avatar }}" height="50" alt="{{ user.avatar }}">
+    {% if current_user.is_following(user) %}
+<!--    todo unfollow api-->
+    {% endif %}
+    <br>
     <strong>Username: </strong>{{ username }} <br>
     <strong>Email: </strong>{{ user.email }} <br>
     <strong>Recent login</strong>: {{ user.recent_login }}

@@ -21,13 +21,17 @@ render_template = partial(flask.render_template)
 current_time = lambda: time.strftime('%Y-%m-%d %H:%M')
 
 
+def redirect_unfollow():
+    print('fuck')
+
+
 @app.route('/')
 @app.route('/home')
 @login_required
 def home():
     # the chosen path name for templates: templates
     return render_template('home.html', route='Home', posts=current_user.get_visible_posts(),
-                           current_time=current_time(), flash_parse=flash_parse)
+                           current_time=current_time(), flash_parse=flash_parse, redirect_unfollow=redirect_unfollow)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -97,7 +101,7 @@ def profile_edit(username):
         current_user.email = edit_form.email.data
 
     if changed:
-        BlogUser().flush().commit()
+        BlogUser().commit()
         flask.flash(success('successfully changed your profile!'))
 
     return flask.redirect(flask.url_for('profile_edit', username=current_user.username))

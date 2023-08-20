@@ -137,28 +137,17 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
             .order_by(Posts.post_time.desc())  # desc() -> column method
         )
 
-    def follow(self, *users: "BlogUser", autocommit=True) -> Self:
+    def follow(self, *users: "BlogUser") -> Self:
         """
         >>> admin = BlogUser.get_uuser(id=1)
         >>> admin.follow(user1, user2)
         """
         [self.following.append(user) for user in users if not self.is_following(user)]
+        return self
 
-        if not autocommit:
-            return self
-
-        return self.commit()
-
-    def unfollow(self, *users: "BlogUser", autocommit=True) -> Self:
+    def unfollow(self, *users: "BlogUser") -> Self:
         [self.following.remove(user) for user in users if self.is_following(user)]
-
-        if not autocommit:
-            return self
-
-        return self.commit()
-
-    def redirect_follow(self):
-        pass
+        return self
 
     def is_following(self, user: "BlogUser") -> bool:
         return user in self.following

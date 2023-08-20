@@ -92,3 +92,7 @@ class ProfileEditForm(FlaskForm):
 
         if BlogUser(False).filter_by(email=email).all():
             raise ValidationError('You need to have a unique email address')
+
+
+class BasicForm(FlaskForm):
+    submit = SubmitField()
