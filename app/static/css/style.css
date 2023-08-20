@@ -70,6 +70,10 @@
   color: white;
 }
 
+.button-following:hover {
+  background: deepskyblue;
+}
+
 .avatar-box {
   height: 70px;
   width: 70px;

@@ -56,8 +56,8 @@ class BuildUser:
             user2: BlogUser = random.choice(users)
             if user1 == user2:
                 continue
-            user1.follows(user2, autocommit=False)
-            user2.follows(user1, autocommit=False)
+            user1.follow(user2, autocommit=False)
+            user2.follow(user1, autocommit=False)
         BlogUser(False).commit()
         return self
 

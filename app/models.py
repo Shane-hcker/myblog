@@ -2,6 +2,7 @@
 from typing import *
 from datetime import datetime
 import logging
+from flask import redirect, url_for
 
 from sqlalchemy import VARCHAR, Integer, DateTime, Text, select, and_
 from sqlalchemy.orm import backref
@@ -136,10 +137,10 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
             .order_by(Posts.post_time.desc())  # desc() -> column method
         )
 
-    def follows(self, *users: "BlogUser", autocommit=True) -> Self:
+    def follow(self, *users: "BlogUser", autocommit=True) -> Self:
         """
         >>> admin = BlogUser.get_uuser(id=1)
-        >>> admin.follows(user1, user2)
+        >>> admin.follow(user1, user2)
         """
         [self.following.append(user) for user in users if not self.is_following(user)]
 
@@ -148,13 +149,16 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
 
         return self.commit()
 
-    def unfollows(self, *users: "BlogUser", autocommit=True) -> Self:
+    def unfollow(self, *users: "BlogUser", autocommit=True) -> Self:
         [self.following.remove(user) for user in users if self.is_following(user)]
 
         if not autocommit:
             return self
 
         return self.commit()
+
+    def redirect_follow(self):
+        pass
 
     def is_following(self, user: "BlogUser") -> bool:
         return user in self.following

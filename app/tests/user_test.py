@@ -39,9 +39,9 @@ class UserModelTest(unittest.TestCase):
         user3 = BlogUser(username='user3', email='user3@example.com')
         BlogUser(False).add_all([user1, user2, user3]).commit()
 
-        user1.follows(user3).follows(user2)
-        user2.follows(user1)
-        user3.follows(user2)
+        user1.follow(user3).follow(user2)
+        user2.follow(user1)
+        user3.follow(user2)
 
         BlogUser(False).commit()
 

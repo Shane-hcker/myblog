@@ -26,8 +26,8 @@ class Following(UserRelationAPI):
         super().__init__(*args, **kwargs)
 
         self.parser = reqparse.RequestParser()
-        self.parser.add_argument('username', type=str, location='form')
-        self.parser.add_argument('email', type=str, location='form')
+        self.parser.add_argument('fusername', type=str, location='form')
+        self.parser.add_argument('femail', type=str, location='form')
 
     @login_required
     def get(self, username):
@@ -38,7 +38,7 @@ class Following(UserRelationAPI):
     def delete(self, username):
         """
         /follow DELETE
-        form data: {'username': ..., 'email': ...}
+        form data: {'fusername': ..., 'femail': ...}
         """
         if current_user.username != username:
             return self.error_405()
@@ -53,7 +53,7 @@ class Following(UserRelationAPI):
                 'message': f'Already followed {target_user}'
             }
 
-        current_user.unfollows(target_user)
+        current_user.unfollow(target_user)
 
         return {
             'status': 200,
@@ -62,10 +62,10 @@ class Following(UserRelationAPI):
         }
 
     @login_required
-    def post(self, username, **data) -> Dict[str, Any]:
+    def post(self, username) -> Dict[str, Any]:
         """
         /follow POST
-        form data: {'username': ..., 'email': ...}
+        form data: {'fusername': ..., 'femail': ...}
         """
         if current_user.username != username:
             return self.error_405()
@@ -82,7 +82,7 @@ class Following(UserRelationAPI):
                 'message': f'Already followed {target_user}'
             }
 
-        current_user.follows(target_user)
+        current_user.follow(target_user)
 
         return {
             'status': 200,
