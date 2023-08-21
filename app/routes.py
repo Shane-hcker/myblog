@@ -75,8 +75,10 @@ def login() -> Any:
 @login_required
 @check_valid_username
 def profile(username):
-    return render_template('user/profile.html', flash_parse=flash_parse, username=username,
-                           current_time=current_time(), user=BlogUser.get_uuser(username=username))
+    if not (form := forms.BasicForm()).validate_on_submit():
+        return render_template('user/profile.html', flash_parse=flash_parse, username=username,
+                               current_time=current_time(), user=BlogUser.get_uuser(username=username),
+                               form=form)
 
 
 @app.route('/user/<username>/profile/edit', methods=['GET', "POST"])

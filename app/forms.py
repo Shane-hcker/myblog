@@ -12,7 +12,7 @@ from wtforms import (StringField, BooleanField, PasswordField, Field,
 from .models import BlogUser
 
 
-__all__ = ['UserLoginForm', 'UserRegForm']
+__all__ = ['UserLoginForm', 'UserRegForm', 'BasicForm']
 
 
 class EmailValidator(Email):

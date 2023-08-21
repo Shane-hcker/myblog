@@ -39,6 +39,7 @@ def add_handler_immediate() -> None:
     '''
     if app.debug:
         return
+
     if not (host := app.config.get('MAIL_HOST')):
         return
 

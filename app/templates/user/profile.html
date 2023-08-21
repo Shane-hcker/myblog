@@ -10,8 +10,18 @@
     <hr>
     <br>
     <img src="{{ current_user.avatar }}" height="50" alt="{{ user.avatar }}">
-    {% if current_user.is_following(user) %}
-<!--    todo unfollow api-->
+    {% if username == current_user.username %}
+
+    {% elif current_user.is_following(user) %}
+      <form action="{{ url_for('unfollow', username=username) }}" method="post">
+        {{ form.hidden_tag() }}
+        {{ form.submit(value='unfollow') }}
+      </form>
+    {% else %}
+      <form action="{{ url_for('follow', username=username) }}" method="post">
+        {{ form.hidden_tag() }}
+        {{ form.submit(value='follow') }}
+      </form>
     {% endif %}
     <br>
     <strong>Username: </strong>{{ username }} <br>
