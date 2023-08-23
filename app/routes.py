@@ -6,13 +6,13 @@ from urllib.parse import urlsplit
 import flask
 
 # Plugins
-from flask_login import (login_user, logout_user, login_required, current_user)
+from flask_login import login_user, logout_user, login_required, current_user
 
 from app import app, forms, success, fail
+from app.models import *
 
-from app.utils.saltypassword import *
 from app.utils.check import check_valid_username
-
+from app.utils.saltypassword import *
 from app.utils.gravatar import *
 from app.utils.misc import *
 
@@ -21,17 +21,13 @@ render_template = partial(flask.render_template)
 current_time = lambda: time.strftime('%Y-%m-%d %H:%M')
 
 
-def redirect_unfollow():
-    print('fuck')
-
-
 @app.route('/')
 @app.route('/home')
 @login_required
 def home():
     # the chosen path name for templates: templates
     return render_template('home.html', route='Home', posts=current_user.get_visible_posts(),
-                           current_time=current_time(), flash_parse=flash_parse, redirect_unfollow=redirect_unfollow)
+                           current_time=current_time(), flash_parse=flash_parse)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -103,7 +99,7 @@ def profile_edit(username):
         current_user.email = edit_form.email.data
 
     if changed:
-        BlogUser().commit()
+        BlogUser(False).commit()
         flask.flash(success('successfully changed your profile!'))
 
     return flask.redirect(flask.url_for('profile_edit', username=current_user.username))

@@ -1,10 +1,11 @@
 # -*- encoding: utf-8 -*-
 from typing import *
 from abc import ABCMeta, abstractmethod
+import json
 import flask
 
-from flask_restful import Resource, reqparse
-from flask_login import current_user, login_required
+from flask_restful import Resource
+from flask_login import current_user
 
 from app import api
 from app.models import BlogUser
@@ -86,7 +87,7 @@ class Follow(UserRelationAPI):
 
         current_user.follow(target_user).commit()
 
-        # flask.redirect(flask.url_for('profile', username=username))
+        flask.redirect(flask.url_for('profile', username=username))
 
         return {
             'status': 200,
@@ -116,26 +117,26 @@ class Unfollow(UserRelationAPI):
             }
 
         current_user.unfollow(target_user).commit()
-        # flask.redirect(flask.url_for('profile', username=username))
+        flask.redirect(flask.url_for('profile', username=username))
         return {
             'status': 200,
             'reason': 'OK',
-            'message': f'Followed {str(target_user)}'
+            'message': f'Unfollowed {str(target_user)}'
         }
 
 
 class Followers(UserRelationAPI):
     @auth_check
     def get(self, username) -> JSONResponse:
-        followers = BlogUser.get_uuser(username=username).followers
+        followers_ = BlogUser.get_uuser(username=username).followers
 
         return {
             f'user{i}': {
-                'username': (user := followers[i]).username,
+                'username': (user := followers_[i]).username,
                 'email': user.email,
                 'avatar': user.avatar,
             }
-            for i in range(len(followers))
+            for i in range(len(followers_))
         }
 
     def post(self, *args, **kwargs) -> JSONResponse:
@@ -144,4 +145,4 @@ class Followers(UserRelationAPI):
 
 api.add_resource(Follow, '/follow/<username>', endpoint='follow')
 api.add_resource(Unfollow, '/unfollow/<username>', endpoint='unfollow')
-api.add_resource(Followers, '/followers/<username>', endpoint='follower')
+api.add_resource(Followers, '/followers/<username>', endpoint='followers')
