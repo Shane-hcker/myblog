@@ -16,7 +16,7 @@ JSONResponse = TypeVar('JSONResponse', bound=[MutableMapping[str, Optional[Any]]
 
 
 def auth_check(func):
-    def wrapper(*args, **kwargs) -> Any:
+    def wrapper(*args, **kwargs):
         if not current_user.is_authenticated:
             return UserRelationAPI.error_405()
         return func(*args, **kwargs)
@@ -70,11 +70,9 @@ class UserRelationAPI(Resource, metaclass=ABCMeta):
 class Follow(UserRelationAPI):
     @auth_check
     def get(self, username) -> MutableMapping:
-        following = BlogUser.get_uuser(username=username).following
-
         return {
             following_user.to_dict(followers=False, following=False)
-            for following_user in following
+            for following_user in BlogUser.get_uuser(username=username).following
         }
 
     @auth_check
