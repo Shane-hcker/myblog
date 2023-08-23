@@ -27,6 +27,9 @@ class BuildUser:
         pwd = SaltyPassword.saltify('china666')
         admin1 = BlogUser(username='admin', email='shanebilibili@outlook.com', password=pwd)
         admin2 = BlogUser(username='shane_admin', email='bwxiang23@uwcchina.org', password=pwd)
+        admin1.set_avatar(size=70)
+        admin2.set_avatar(size=70)
+
         BlogUser(False).add(admin1).add(admin2)
 
         # creating random test-users
@@ -35,7 +38,6 @@ class BuildUser:
             username=email,
             password=SaltyPassword.saltify(self.random_password())
         ) for _ in range(4)]).commit()
-
         return self
 
     def build_posts(self) -> Self:

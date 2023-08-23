@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 from typing import *
+from collections import OrderedDict as ordered_dict
 from datetime import datetime
 import logging
 from flask import redirect, url_for
@@ -18,7 +19,7 @@ from app.utils.mixins import *
 from app.datatypes import *
 
 
-__all__ = ['BlogUser', 'Posts', 'retrieve_user', 'followers']
+__all__ = ['BlogUser', 'Posts', 'retrieve_user', 'follow_table']
 
 
 # load user from session
@@ -29,11 +30,14 @@ def retrieve_user(user_id):
 
 
 # creating association table
-followers = db.Table(
-    'followers',
+follow_table = db.Table(
+    'follow_table',
     Column('follower_id', Integer, ForeignKey('userdata.id')),
     Column('following_id', Integer, ForeignKey('userdata.id'))
 )
+
+
+UserMapping = TypeVar('UserMapping', bound=Dict[str, Dict[str, Any]])
 
 
 class BlogUser(UserMixin, DBMixin, db.Model):  # One
@@ -63,9 +67,9 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
 
     # setting up following
     following = db.relationship(
-        'BlogUser', secondary=followers,
-        primaryjoin=(followers.c.follower_id == id),
-        secondaryjoin=(followers.c.following_id == id),
+        'BlogUser', secondary=follow_table,
+        primaryjoin=(follow_table.c.follower_id == id),
+        secondaryjoin=(follow_table.c.following_id == id),
         backref=backref('followers', lazy=True),
         lazy=True
     )
@@ -78,6 +82,19 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         self.username = username
         self.password = password
         self.avatar = avatar or default_avatar(email)
+
+    def to_dict(self, keyname=None, followers=True, following=True) -> UserMapping:
+        user_dict = ordered_dict({
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'avatar': self.avatar,
+            'recent_login': self.recent_login,
+        })
+        user_dict.update({'followers': self.followers}) if followers else ...
+        user_dict.update({'following': self.following}) if following else ...
+
+        return ordered_dict({keyname or self.username: user_dict})
 
     def set_avatar(self, size=None, default=None) -> str:
         with GravatarFetcher(self.email, default or 'mp') as fetcher:
@@ -131,8 +148,8 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         yield from (
             # join(association table, condition)
             Posts.query
-            .join(followers, (followers.c.following_id == Posts.poster_id))
-            .filter(followers.c.follower_id == self.id)
+            .join(follow_table, (follow_table.c.following_id == Posts.poster_id))
+            .filter(follow_table.c.follower_id == self.id)
             .union(user_posts)
             .order_by(Posts.post_time.desc())  # desc() -> column method
         )
