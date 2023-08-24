@@ -110,11 +110,11 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         return cls(*args, **kwargs)
 
     @staticmethod
-    def get_all_users(*params) -> List[Dict[str, Any]]:
+    def all_users(*params) -> List[Dict[str, Any]]:
         """ Mem efficient
-        >>> list(BlogUser.get_all_users('*'))
+        >>> list(BlogUser.all_users('*'))
         [BlogUser(username=..., email=...), ...]
-        >>> list(BlogUser.get_all_users('username'))
+        >>> list(BlogUser.all_users('username'))
         [{username: 'username'}, ...]
         """
         if '*' in params:
@@ -140,7 +140,7 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         )
         return db.session.scalar(select(BlogUser).where(where_clause))
 
-    def get_visible_posts(self):
+    def visible_posts(self):
         """
         obtains posts of the user and user-subscribed users
         """

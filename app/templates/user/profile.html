@@ -1,31 +1,40 @@
 {% extends "user/base.html" %}
 
 {% block content %}
-  <div class="userinfo">&nbsp;&nbsp;
+  <div class="userinfo">
+
+    &nbsp;&nbsp;
     {% if username == current_user.username %}
       <h1>My Profile:&nbsp;</h1>
     {% else %}
       <h1>{{ username }}'s Profile: </h1>
     {% endif %}
+
     <hr>
     <br>
-    <img src="{{ current_user.avatar }}" height="50" alt="{{ user.avatar }}">
-    {% if username == current_user.username %}
 
+    <img src="{{ current_user.avatar }}" height="50" alt="{{ user.avatar }}">
+
+    {% if username == current_user.username %}
     {% elif current_user.is_following(user) %}
       <form action="{{ url_for('unfollow', username=username) }}" method="post">
         {{ form.hidden_tag() }}
-        {{ form.submit(value='unfollow') }}
+        {{ form.submit(value='unfollow', class='button-following') }}
       </form>
     {% else %}
       <form action="{{ url_for('follow', username=username) }}" method="post">
         {{ form.hidden_tag() }}
-        {{ form.submit(value='follow') }}
+        {{ form.submit(value='follow', class='button-following') }}
       </form>
     {% endif %}
+
     <br>
-    <strong>Username: </strong>{{ username }} <br>
-    <strong>Email: </strong>{{ user.email }} <br>
-    <strong>Recent login</strong>: {{ user.recent_login }}
+
+    <strong>Username: </strong>{{ username }}
+    <br>
+    <strong>Email: </strong>{{ user.email }}
+    <br>
+    <strong>Recent login: </strong>
+    {{ user.recent_login }}
   </div>
 {% endblock %}

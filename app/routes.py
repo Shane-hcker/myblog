@@ -6,9 +6,9 @@ from urllib.parse import urlsplit
 import flask
 
 # Plugins
-from flask_login import login_user, logout_user, login_required, current_user
+from flask_login import current_user, login_user, logout_user, login_required
 
-from app import app, forms, success, fail
+from app import forms, app, success, fail
 from app.models import *
 
 from app.utils.check import check_valid_username
@@ -26,7 +26,7 @@ current_time = lambda: time.strftime('%Y-%m-%d %H:%M')
 @login_required
 def home():
     # the chosen path name for templates: templates
-    return render_template('home.html', route='Home', posts=current_user.get_visible_posts(),
+    return render_template('home.html', route='Home', posts=current_user.visible_posts(),
                            current_time=current_time(), flash_parse=flash_parse)
 
 
@@ -129,15 +129,16 @@ def signup():
         return render_template('signup.html', reg_form=reg_form, route='Sign Up', flash_parse=flash_parse,
                                current_time=current_time())
 
-    new_user = BlogUser()
-    new_user.email = reg_form.email.data
-    new_user.username = reg_form.username.data
-    new_user.password = SaltyPassword.saltify(reg_form.password.data)
+    new_user = BlogUser(
+        email=reg_form.email.data, 
+        username=reg_form.username.data,
+        password=SaltyPassword.saltify(reg_form.password.data)
+    )
 
     with GravatarFetcher(email=new_user.email) as fetcher:
         new_user.avatar = fetcher.fetch(size=100).url
 
-    BlogUser(False).add(new_user).flush().commit()
+    BlogUser(False).add(new_user).commit()
 
     flask.flash(success('you successfully registered your account, please login...'))
     return flask.redirect(flask.url_for('login'))

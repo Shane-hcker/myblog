@@ -12,7 +12,7 @@
     {% for post in posts %}
       <tr>
         <td>
-          <a href="{{ url_for('profile', username=post.poster.username) }}">
+          <a href="{{ url_for('profile', username=post.poster.username) }}" title="Goto Profile">
             <div class="avatar-box">
               <img src="{{ post.poster.avatar }}">
             </div>

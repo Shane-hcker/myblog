@@ -12,7 +12,7 @@ from app import api
 from app.models import BlogUser
 
 
-JSONResponse = TypeVar('JSONResponse', bound=[MutableMapping[str, Optional[Any]]])
+JSONResponse = TypeVar('JSONResponse', bound=[MutableMapping[str, Optional[str | int]]])
 
 
 def auth_check(func):
@@ -33,12 +33,12 @@ class UserRelationAPI(Resource, metaclass=ABCMeta):
     def post(self, *args, **kwargs) -> None: pass
 
     @staticmethod
-    def noneless_dict(d: dict) -> Dict[Any, Any]:
+    def noneless_dict(d: dict) -> MutableMapping[Any, Any]:
         keys = d.keys()
         [d.pop(k) for k in keys if not d.get(k)]
         return d
 
-    def parse_valid_args(self, parser=None) -> Dict[Any, Any]:
+    def parse_valid_args(self, parser=None) -> MutableMapping[Any, Any]:
         parser = parser or self.parser
         args = parser.parse_args()
         args = self.noneless_dict(args)
@@ -76,7 +76,7 @@ class Follow(UserRelationAPI):
         }
 
     @auth_check
-    def post(self, username) -> JSONResponse | Any:
+    def post(self, username) -> Any:
         """
         /follow/<username> POST
         """
@@ -110,11 +110,9 @@ class Unfollow(UserRelationAPI):
 class Followers(UserRelationAPI):
     @auth_check
     def get(self, username) -> MutableMapping:
-        followers_ = BlogUser.get_uuser(username=username).followers
-
         return {
             follower.to_dict(followers=False, following=False)
-            for follower in followers_
+            for follower in BlogUser.get_uuser(username=username).followers
         }
 
     def post(self, *args, **kwargs) -> JSONResponse:
