@@ -1,8 +1,10 @@
 # -*- encoding: utf-8 -*-
 from typing import *
-import requests
 import hashlib
 from urllib.parse import urlencode
+
+import requests
+import filetype
 
 
 __all__ = ['GravatarFetcher', 'default_avatar']
@@ -53,5 +55,21 @@ class GravatarFetcher:
     __repr__ = __str__
 
 
-if __name__ == '__main__':
-    print(default_avatar('shanebilibili@outlook.com'))
+
+class GravatarUploader:
+    ALLOW_EXT = set(['jpg', 'jpeg', 'png', 'webp'])
+
+    @staticmethod
+    def validate_file(filename) -> bool:
+        return '.' in filename and GravatarUploader.is_file_allowed(filename)
+
+    @staticmethod
+    def is_file_allowed(filename) -> bool:
+        guess = filetype.guess(filename)
+        if not guess:
+            return False
+
+        allow = GravatarUploader.ALLOW_EXT
+
+        type_, spec = guess.mime.split('/')
+        return guess.extension in allow and type_ == 'image' and spec in allow

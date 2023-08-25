@@ -3,7 +3,6 @@ from typing import *
 from collections import OrderedDict as ordered_dict
 from datetime import datetime
 import logging
-from flask import redirect, url_for
 
 from sqlalchemy import VARCHAR, Integer, DateTime, Text, select, and_
 from sqlalchemy.orm import backref
