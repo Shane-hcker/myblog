@@ -7,7 +7,7 @@ import requests
 import filetype
 
 
-__all__ = ['GravatarFetcher', 'default_avatar']
+__all__ = ['GravatarFetcher', 'default_avatar', 'GravatarUpload']
 
 
 def default_avatar(email, size=100) -> str:
@@ -56,20 +56,41 @@ class GravatarFetcher:
 
 
 
-class GravatarUploader:
+class GravatarUpload:
     ALLOW_EXT = set(['jpg', 'jpeg', 'png', 'webp'])
+
+    def __init__(self, filename: str) -> None:
+        self.__filename: str = filename
+        self.__status: bool = self.validate_file(self.filename)
+
+    @property
+    def status(self) -> bool:
+        return self.__status
+
+    @property
+    def filename(self) -> str:
+        return self.__filename
+    
+    @filename.setter
+    def filename(self, filename: str) -> Optional[TypeError]:
+        if not isinstance(filename, str):
+            raise TypeError(f'Unsupported type {type(filename)} for `filename`')
+        self.__filename = filename
 
     @staticmethod
     def validate_file(filename) -> bool:
-        return '.' in filename and GravatarUploader.is_file_allowed(filename)
+        return '.' in filename and GravatarUpload.is_file_allowed(filename)
 
     @staticmethod
     def is_file_allowed(filename) -> bool:
-        guess = filetype.guess(filename)
-        if not guess:
+        if not (guess := filetype.guess(filename)):
             return False
 
-        allow = GravatarUploader.ALLOW_EXT
+        allow = GravatarUpload.ALLOW_EXT
 
         type_, spec = guess.mime.split('/')
         return guess.extension in allow and type_ == 'image' and spec in allow
+    
+    @classmethod
+    def set_file(cls, filename) -> Self:
+        return cls(filename)

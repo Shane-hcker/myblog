@@ -11,6 +11,7 @@ from flask_login import LoginManager  # user login manager
 # from flask_mail import Mail  # send email
 from flask_restful import Api
 
+
 app = flask.Flask(__name__)
 api = Api(app)
 
@@ -58,4 +59,4 @@ def add_handler_immediate() -> None:
     app.logger.addHandler(mail_handler)
 
 
-from app import routes, apis, errors, models, datatypes
+from app import apis, routes, errors, models, datatypes

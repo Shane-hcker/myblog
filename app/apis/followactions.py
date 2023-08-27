@@ -8,8 +8,10 @@ import flask
 from flask_restful import Resource
 from flask_login import current_user
 
-from app import api
 from app.models import BlogUser
+
+
+__all__ = ['JSONResponse', 'auth_check', 'Unfollow', 'Follow', 'Followers']
 
 
 JSONResponse = TypeVar('JSONResponse', bound=[MutableMapping[str, Optional[str | int]]])
@@ -117,8 +119,3 @@ class Followers(UserRelationAPI):
 
     def post(self, *args, **kwargs) -> JSONResponse:
         return self.error_405()
-
-
-api.add_resource(Follow, '/follow/<username>', endpoint='follow')
-api.add_resource(Unfollow, '/unfollow/<username>', endpoint='unfollow')
-api.add_resource(Followers, '/followers/<username>', endpoint='followers')

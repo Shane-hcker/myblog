@@ -98,6 +98,11 @@ def profile_edit(username):
         changed = True
         current_user.email = edit_form.email.data
 
+    # Avatar
+    filename = flask.reuqest.files['file']
+    if filename and 
+
+
     if changed:
         BlogUser(False).commit()
         flask.flash(success('successfully changed your profile!'))

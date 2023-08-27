@@ -4,10 +4,13 @@ from typing import *
 
 from dns.resolver import NoResolverConfiguration
 
+from wtforms.validators import DataRequired, Length, Email, ValidationError
+from wtforms import (
+    StringField, BooleanField, PasswordField, Field, 
+    SubmitField, FileField, TextAreaField
+)
+
 from flask_wtf import FlaskForm, RecaptchaField
-from wtforms.validators import (DataRequired, Length, Email, ValidationError)
-from wtforms import (StringField, BooleanField, PasswordField, Field,
-                     SubmitField, FileField, TextAreaField)
 
 from .models import BlogUser
 
@@ -20,7 +23,7 @@ class EmailValidator(Email):
         try:
             return super().__call__(*args, **kwargs)
         except NoResolverConfiguration:
-            logging.warning('check_deliverability can operate properly, now set to False')
+            logging.warning('check_deliverability cannot operate properly, now set to False')
             self.check_deliverability = False
             return super().__call__(*args, **kwargs)
 
@@ -39,6 +42,10 @@ class UserForm(FlaskForm):
             'email': self.email.data,
             'password': self.password.data
         }
+
+
+class BasicForm(FlaskForm): 
+    submit = SubmitField()
 
 
 class UserLoginForm(UserForm):
@@ -67,10 +74,11 @@ class UserRegForm(UserForm):
 
 
 class ProfileEditForm(FlaskForm):
-    avatar = FileField(label='Upload Your new avatar')
-    username = StringField(label='Your Username', validators=[DataRequired(), Length(min=4, max=32)])
+    avatar = FileField(label='Upload Your new avatar', name='file')
+    username = StringField(label='Your Username', validators=[DataRequired(), Length(min=4, max=32)], 
+                           name='username')
     email = StringField(label='Your Email: ', validators=[DataRequired(), Length(min=8),
-                        EmailValidator('invalid email', check_deliverability=True)])
+                        EmailValidator('invalid email', check_deliverability=True)], name='email')
     # description = TextAreaField(label='Your Description: ')
     submit = SubmitField(label='Confirm Changes')
 
@@ -92,7 +100,3 @@ class ProfileEditForm(FlaskForm):
 
         if BlogUser(False).filter_by(email=email).all():
             raise ValidationError('You need to have a unique email address')
-
-
-class BasicForm(FlaskForm):
-    submit = SubmitField()
