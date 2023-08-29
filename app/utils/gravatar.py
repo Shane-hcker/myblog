@@ -58,39 +58,39 @@ class GravatarFetcher:
 
 class GravatarUpload:
     ALLOW_EXT = set(['jpg', 'jpeg', 'png', 'webp'])
+    SAVE_DIR = '/avatar'
 
     def __init__(self, filename: str) -> None:
         self.__filename: str = filename
         self.__status: bool = self.validate_file(self.filename)
 
-    @property
-    def status(self) -> bool:
-        return self.__status
+    def secure_filename(self):
+        filename = self.filename.replace('//', '/').replace('\\', '/').rsplit('/', 1)[-1]
+        ....
+
+    def is_file_allowed(self) -> bool:
+        if not (guess_result := filetype.guess(self.filename)):
+            return False
+
+        allow = GravatarUpload.ALLOW_EXT
+
+        type_, spec = guess_result.mime.split('/')
+        return guess_result.extension.lower() in allow and type_ == 'image' and spec.lower() in allow
+
+    def validate_file(self) -> bool:
+        return '.' in self.filename and self.is_file_allowed()
 
     @property
-    def filename(self) -> str:
-        return self.__filename
-    
+    def filename(self) -> str: return self.__filename
+
     @filename.setter
     def filename(self, filename: str) -> Optional[TypeError]:
         if not isinstance(filename, str):
             raise TypeError(f'Unsupported type {type(filename)} for `filename`')
         self.__filename = filename
 
-    @staticmethod
-    def validate_file(filename) -> bool:
-        return '.' in filename and GravatarUpload.is_file_allowed(filename)
-
-    @staticmethod
-    def is_file_allowed(filename) -> bool:
-        if not (guess := filetype.guess(filename)):
-            return False
-
-        allow = GravatarUpload.ALLOW_EXT
-
-        type_, spec = guess.mime.split('/')
-        return guess.extension in allow and type_ == 'image' and spec in allow
-    
     @classmethod
-    def set_file(cls, filename) -> Self:
-        return cls(filename)
+    def set_file(cls, filename) -> Self: return cls(filename)
+
+    @property
+    def status(self) -> bool: return self.__status
