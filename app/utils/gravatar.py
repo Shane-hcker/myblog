@@ -1,13 +1,16 @@
 # -*- encoding: utf-8 -*-
 from typing import *
+import os
 import hashlib
 from urllib.parse import urlencode
 
+from flask import request
+from werkzeug.datastructures.file_storage import FileStorage
 import requests
 import filetype
 
 
-__all__ = ['GravatarFetcher', 'default_avatar', 'GravatarUpload']
+__all__ = ['GravatarFetcher', 'default_avatar', 'Avatar']
 
 
 def default_avatar(email, size=100) -> str:
@@ -55,42 +58,59 @@ class GravatarFetcher:
     __repr__ = __str__
 
 
+class GravatarGenerator:
+    pass
 
-class GravatarUpload:
+
+class Avatar:
+    """
+    >>> avatar = Avatar(avatar)
+    >>> avatar.is_valid
+    """
     ALLOW_EXT = set(['jpg', 'jpeg', 'png', 'webp'])
     SAVE_DIR = '/avatar'
 
-    def __init__(self, filename: str) -> None:
-        self.__filename: str = filename
-        self.__status: bool = self.validate_file(self.filename)
+    def __init__(self, file: FileStorage) -> None:
+        self.__file: FileStorage = file
+        self.__valid: bool = self.__validate_file(self.file)
 
-    def secure_filename(self):
-        filename = self.filename.replace('//', '/').replace('\\', '/').rsplit('/', 1)[-1]
-        ....
+    def __validate_file(self, file: FileStorage) -> bool:
+        if not isinstance(file, FileStorage):
+            raise TypeError('Attribute `file` should only be type `FileStorage`')
 
-    def is_file_allowed(self) -> bool:
-        if not (guess_result := filetype.guess(self.filename)):
+        return '.' in file.filename and self.__is_file_allowed(self.file)
+
+    def __is_file_allowed(self, file: FileStorage) -> bool:
+        if (guess_result := filetype.guess(file.filename)):
             return False
 
-        allow = GravatarUpload.ALLOW_EXT
+        return guess_result.mime.split('/')[-1].lower() in self.ALLOW_EXT
 
-        type_, spec = guess_result.mime.split('/')
-        return guess_result.extension.lower() in allow and type_ == 'image' and spec.lower() in allow
+    def save(self) -> None:
+        self.file.save(os.path.join(self.SAVE_DIR, self.secure_filename(self.filename)))
 
-    def validate_file(self) -> bool:
-        return '.' in self.filename and self.is_file_allowed()
-
-    @property
-    def filename(self) -> str: return self.__filename
-
-    @filename.setter
-    def filename(self, filename: str) -> Optional[TypeError]:
-        if not isinstance(filename, str):
-            raise TypeError(f'Unsupported type {type(filename)} for `filename`')
-        self.__filename = filename
+    @staticmethod
+    def secure_filename(filename) -> str:
+        return filename.replace('//', '/').replace('\\', '/').rsplit('/', 1)[-1]
 
     @classmethod
-    def set_file(cls, filename) -> Self: return cls(filename)
+    def create_avatar(cls, file) -> "Avatar": return cls(file)
 
     @property
-    def status(self) -> bool: return self.__status
+    def file(self) -> FileStorage: return self.__file
+
+    @property
+    def is_valid(self) -> bool: return self.__valid
+
+    @property
+    def filename(self) -> str: return self.file.filename
+
+    def __str__(self) -> str: return f"GravatarUpload(file={self.file}, status={self.status})"
+
+    def __enter__(self): return self
+    
+    def __exit__(exc_type, exc_val, exc_tb):
+        if exc_val:
+            raise exc_type(exc_val)
+
+    __repr__ = __str__

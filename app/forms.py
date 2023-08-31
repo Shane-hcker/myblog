@@ -74,7 +74,7 @@ class UserRegForm(UserForm):
 
 
 class ProfileEditForm(FlaskForm):
-    avatar = FileField(label='Upload Your new avatar', name='file')
+    avatar = FileField(label='Upload Your new avatar', name='avatar')
     username = StringField(label='Your Username', validators=[DataRequired(), Length(min=4, max=32)], 
                            name='username')
     email = StringField(label='Your Email: ', validators=[DataRequired(), Length(min=8),

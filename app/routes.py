@@ -99,11 +99,13 @@ def profile_edit(username):
         current_user.email = edit_form.email.data
 
     # Avatar
-    filename = flask.reuqest.files['file']
-    if filename and 
+    avatar = Avatar.create_avatar(flask.request.files['avatar'])
+    print(avatar.is_valid)
+    if avatar.is_valid:
+        avatar.save()
+    
 
-
-    if changed:
+    if not changed:
         BlogUser(False).commit()
         flask.flash(success('successfully changed your profile!'))
 
