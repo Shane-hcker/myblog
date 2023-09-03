@@ -5,13 +5,12 @@ import os
 # import flask
 # from requests import post as rpost, delete as rdelete
 # from flask_login import current_user
-from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
 
 from app.models import Posts, BlogUser
 
 
-__all__ = ['getAllPosts', 'flash_parse', 'secure_filename', 'is_file_allowed']
+__all__ = ['getAllPosts', 'flash_parse', 'is_file_allowed']
 
 
 def getAllPosts() -> List[Dict[str, Any]]:

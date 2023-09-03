@@ -6,6 +6,9 @@ from functools import partial
 from urllib.parse import urlsplit
 import flask
 
+from werkzeug.utils import secure_filename, send_file, send_from_directory
+from werkzeug.security import safe_join
+
 # Plugins
 from flask_login import current_user, login_user, logout_user, login_required
 
@@ -100,9 +103,12 @@ def profile_edit(username):
         changed = True
         current_user.email = edit_form.email.data
 
-    if (avatar := flask.request.files['avatar']) and is_file_allowed('avatar', AppConfig.ALLOW_EXT):
-        filename = secure_filename(avatar)
-        avatar.save(os.path.join(AppConfig.AVATAR_SAVE_DIR, filename))
+    if (avatar := flask.request.files['avatar']) and is_file_allowed(avatar, AppConfig.ALLOW_EXT):
+        filename = secure_filename(avatar.filename)
+        if not os.path.isdir(save_dir := AppConfig.AVATAR_DIR):
+            os.makedirs(save_dir)
+        with open(os.path.join(save_dir, filename), 'wb') as file:
+            file.write(avatar.read())
 
     if not changed:
         BlogUser(False).commit()

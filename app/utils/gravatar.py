@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 import requests
 
 
-__all__ = ['Gravatar', 'default_avatar']
+__all__ = ['Gravatar', 'default_avatar', 'GravatarURL']
 
 
 class Gravatar:
