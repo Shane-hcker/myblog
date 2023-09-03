@@ -96,7 +96,7 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         return ordered_dict({keyname or self.username: user_dict})
 
     def set_avatar(self, size=None, default=None) -> str:
-        with GravatarFetcher(self.email, default or 'mp') as fetcher:
+        with Gravatar(self.email, default or 'mp') as fetcher:
             self.avatar = fetcher.fetch(size).url
             return self.avatar
 

@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 from typing import *
+import os
 import time
 from functools import partial
 from urllib.parse import urlsplit
@@ -11,6 +12,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from app import forms, app, success, fail
 from app.models import *
 
+from app.config import AppConfig
 from app.utils.check import check_valid_username
 from app.utils.saltypassword import *
 from app.utils.gravatar import *
@@ -98,12 +100,9 @@ def profile_edit(username):
         changed = True
         current_user.email = edit_form.email.data
 
-    # Avatar
-    avatar = Avatar.create_avatar(flask.request.files['avatar'])
-    print(avatar.is_valid)
-    if avatar.is_valid:
-        avatar.save()
-    
+    if (avatar := flask.request.files['avatar']) and is_file_allowed('avatar', AppConfig.ALLOW_EXT):
+        filename = secure_filename(avatar)
+        avatar.save(os.path.join(AppConfig.AVATAR_SAVE_DIR, filename))
 
     if not changed:
         BlogUser(False).commit()
@@ -142,7 +141,7 @@ def signup():
         password=SaltyPassword.saltify(reg_form.password.data)
     )
 
-    with GravatarFetcher(email=new_user.email) as fetcher:
+    with Gravatar(email=new_user.email) as fetcher:
         new_user.avatar = fetcher.fetch(size=100).url
 
     BlogUser(False).add(new_user).commit()

@@ -6,6 +6,7 @@ flask
 wtforms
 dnspython
 alembic
+filetype
 
 # app plugins
 flask_sqlalchemy

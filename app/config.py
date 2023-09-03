@@ -34,6 +34,8 @@ class AppConfig:
 
     # Filing
     MAX_CONTENT_LENGTH = content_length('32MB')
+    ALLOW_EXT = {'.jpg', '.jpeg', '.png', '.webp', '.gif'}
+    AVATAR_SAVE_DIR = 'static/avatar/'
 
     # SQLAlchemy
     SQLALCHEMY_DATABASE_URI = URL.create('mysql+pymysql', host='localhost', port=3306,
