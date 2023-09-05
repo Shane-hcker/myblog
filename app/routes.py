@@ -148,7 +148,7 @@ def signup():
     )
 
     with Gravatar(email=new_user.email) as fetcher:
-        new_user.avatar = fetcher.fetch(size=100).url
+        new_user.avatar = fetcher.fetch(size=100).gravatar_url
 
     BlogUser(False).add(new_user).commit()
 

@@ -2,6 +2,7 @@
 import logging
 from typing import *
 
+from werkzeug.datastructures import FileStorage
 from dns.resolver import NoResolverConfiguration
 
 from wtforms.validators import DataRequired, Length, Email, ValidationError
@@ -13,7 +14,7 @@ from wtforms import (
 from flask_wtf import FlaskForm, RecaptchaField
 
 from .models import BlogUser
-
+from .config import AppConfig
 
 __all__ = ['UserLoginForm', 'UserRegForm', 'BasicForm']
 
@@ -49,7 +50,7 @@ class BasicForm(FlaskForm):
 
 
 class UserLoginForm(UserForm):
-    remember = BooleanField(label='Remember Me!!!')
+    remember = BooleanField(label='Remember Me')
     login = SubmitField(label='Login')
 
 
@@ -87,16 +88,20 @@ class ProfileEditForm(FlaskForm):
         self.original_username = original_username
         self.original_email = original_email
 
+    def validate_avatar(self, avatar: Field):
+        raw: FileStorage = avatar.raw_data[0]
+        type_, ext = raw.content_type.split('/')
+        if not (type_ == 'image' and ext in AppConfig.ALLOW_EXT):
+            raise ValidationError(f'\'{raw.filename}\' uploaded is not a picture')
+
     def validate_username(self, username: Field):
         if self.original_username == username.data:
             return
-
         if BlogUser(False).filter_by(username=username).all():
             raise ValidationError('You need to have a unique username')
 
     def validate_email(self, email: Field):
         if self.original_email == email.data:
             return
-
         if BlogUser(False).filter_by(email=email).all():
             raise ValidationError('You need to have a unique email address')

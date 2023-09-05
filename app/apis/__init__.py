@@ -1,6 +1,6 @@
 from app import api
 
-from app.apis.followactions import *
+from .followactions import *
 
 
 api.add_resource(Follow, '/follow/<username>', endpoint='follow')

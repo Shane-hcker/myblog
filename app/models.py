@@ -97,7 +97,7 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
 
     def set_avatar(self, size=None, default=None) -> str:
         with Gravatar(self.email, default or 'mp') as fetcher:
-            self.avatar = fetcher.fetch(size).url
+            self.avatar = fetcher.fetch(size).gravatar_url
             return self.avatar
 
     def reset_recent_login(self):
