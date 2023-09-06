@@ -5,20 +5,63 @@ import hashlib
 from urllib.parse import urlencode
 import pickle
 
-from werkzeug.datastructures.file_storage import FileStorage
 from werkzeug.utils import secure_filename
 import requests
 
-from app.datatypes import FileLike
+from app.datatypes import *
 from app.exceptions import *
 
 __all__ = ['Gravatar', 'default_avatar', 'Avatar']
 
 
+class Avatar:
+    def __init__(self, image: Optional[BufferedLike] = None) -> None:
+        self.__raw: PickledBytes = self.pickled(image)
+
+    @pickletyping
+    def pickled(self, file: BufferedLike) -> Optional[PickledBytes]:
+        # todo avatar completion + implementation in routes.py
+        if isinstance(file, BufferedReader):
+            return pickle.dumps(file.read())
+        if isinstance(file, str):
+            return self.__pickle_img(file)
+
+    @staticmethod
+    def __pickle_img(filename: str) -> bytes:
+        """
+        Only applicable to file with only path given
+        """
+        if not os.path.exists(filename):
+            raise FileNotFoundError(f'{filename} does not exist')
+        with open(filename, 'rb') as file:
+            return pickle.dumps(file.read())
+
+    @pickletyping
+    def raw_from_file(self, file: BufferedLike):
+        if isinstance(file, BufferedReader):
+            return pickle.loads(file.read())
+        if isinstance(file, str):
+            with open(file, 'rb') as f:
+                return pickle.loads(f.read())
+
+    @property
+    def raw(self) -> PickledBytes:
+        return self.__raw
+
+    @raw.setter
+    def raw(self, raw) -> None:
+        if isinstance(raw, bytes):
+            self.__raw = raw
+        elif isinstance(raw, (str, BufferedReader)):
+            self.__raw = self.pickled(raw)
+        else:
+            raise ParamError('Wrong type for parameter `raw`, expected `BufferedLike` or `bytes`')
+
+
 class Gravatar:
     URL = 'https://www.gravatar.com/avatar/'
 
-    def __init__(self, file:Optional[FileLike] = None, *,
+    def __init__(self, file:Optional[BufferedLike] = None, *,
                  email:Optional[str] = None, default:str = 'mp') -> None:
         self.__file = file
         self.__email = email.strip() if email else None
@@ -41,7 +84,7 @@ class Gravatar:
         pass
 
     @staticmethod
-    def open(file: FileLike, mode:str = 'r') -> TextIO:
+    def open(file: BufferedLike, mode:str = 'r') -> TextIO:
         if isinstance(file, str):
             return open(file, mode=mode)
         return file
@@ -57,7 +100,7 @@ class Gravatar:
         return hashlib.md5(email.lower().encode()).hexdigest()
 
     @property
-    def file(self) -> Optional[FileLike]:
+    def file(self) -> Optional[BufferedLike]:
         return self.__file
 
     @property
@@ -73,7 +116,7 @@ class Gravatar:
         return self.__default
 
     @file.setter
-    def file(self, file: FileLike) -> None:
+    def file(self, file: BufferedLike) -> None:
         self.__file = file
 
     @email.setter
@@ -101,46 +144,12 @@ class Gravatar:
     __repr__ = __str__
 
 
-class Avatar:
-    def __init__(self, image:Optional[FileLike] = None) -> None:
-        self.__raw: bytes = self.pickled(image)
-
-    def pickled(self, file: FileLike) -> Optional[bytes]:
-        if not isinstance(file, (TextIO, str)):
-            return
-        if isinstance(file, TextIO):
-            return pickle.dumps(file.read())
-        if isinstance(file, str):
-            return self.__pickle_file(file)
-
-    @staticmethod
-    def __pickle_file(filename: str) -> bytes:
-        """
-        Only applicable to file with only path given
-        """
-        if not os.path.exists(filename):
-            raise FileNotFoundError(f'{filename} does not exist')
-        with open(filename, 'rb') as file:
-            return pickle.dumps(file.read())
-
-    @property
-    def raw(self) -> bytes:
-        return self.__raw
-    
-    @raw.setter
-    def raw(self, raw) -> None:
-        if isinstance(raw, bytes):
-            self.__raw = raw
-        elif isinstance(raw, (TextIO, str)):
-            self.__raw = self.pickled(raw)
-        else:
-            raise ParamError('Wrong type for parameter `raw`, expected `FileLike` or `bytes`')
-
-
 def default_avatar(email, size=100) -> str:
     with Gravatar(email) as fetcher:
         return fetcher.fetch(size).gravatar_url
 
 
 if __name__ == '__main__':
-    avatar = Avatar('./dawdwaawdaw/dawdaw.png')
+    avatar = Avatar(open('../static/avatar/user.png', 'rb'))
+    with open('./images/haha.rnd', 'wb') as f_:
+        avatar.raw.to_file(f_)
