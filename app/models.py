@@ -8,12 +8,12 @@ from sqlalchemy import VARCHAR, Integer, DateTime, Text, select, and_
 from sqlalchemy.orm import backref
 
 # Plugins
-from flask_login import UserMixin, current_user
+from flask_login import UserMixin
 from flask_wtf import FlaskForm
 
-from app import db, login_manager, current_time
+from app import db, login_manager, current_time, AppConfig
 from app.utils.saltypassword import *
-from app.utils.gravatar import *
+from app.utils.avatar import *
 from app.utils.mixins import *
 from app.datatypes import *
 
@@ -80,14 +80,13 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         self.email = email
         self.username = username
         self.password = password
-        self.avatar = avatar or default_avatar(email)
+        self.avatar = avatar or Avatar.default_avatar()
 
     def to_dict(self, keyname=None, followers=True, following=True) -> UserMapping:
         user_dict = ordered_dict({
             'id': self.id,
             'username': self.username,
             'email': self.email,
-            'avatar': self.avatar,
             'recent_login': self.recent_login,
         })
         user_dict.update({'followers': self.followers}) if followers else ...
@@ -95,9 +94,9 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
 
         return ordered_dict({keyname or self.username: user_dict})
 
-    def set_avatar(self, size=None, default=None) -> str:
-        with Gravatar(self.email, default or 'mp') as fetcher:
-            self.avatar = fetcher.fetch(size).gravatar_url
+    def set_avatar(self, size=None, image=None) -> str:
+        with Avatar(image or AppConfig.DEFAULT_AVATAR) as avatar:
+            self.avatar = avatar.resize(size or 70).path
             return self.avatar
 
     def reset_recent_login(self):

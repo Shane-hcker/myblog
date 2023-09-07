@@ -6,6 +6,7 @@ from functools import partial
 from urllib.parse import urlsplit
 import flask
 
+from PIL import Image
 from werkzeug.utils import secure_filename, send_file, send_from_directory
 from werkzeug.security import safe_join
 
@@ -18,7 +19,7 @@ from app.models import *
 from app.config import AppConfig
 from app.utils.check import check_valid_username
 from app.utils.saltypassword import *
-from app.utils.gravatar import *
+from app.utils.avatar import *
 from app.utils.misc import *
 
 
@@ -103,12 +104,13 @@ def profile_edit(username):
         changed = True
         current_user.email = edit_form.email.data
 
-    if (avatar := flask.request.files['avatar']) and is_file_allowed(avatar, AppConfig.ALLOW_EXT):
-        filename = secure_filename(avatar.filename)
-        if not os.path.isdir(save_dir := AppConfig.AVATAR_DIR):
-            os.makedirs(save_dir)
-        with open(os.path.join(save_dir, filename), 'wb') as file:
-            file.write(avatar.read())
+    if raw_avatar := flask.request.files['avatar']:
+        filename = secure_filename(raw_avatar.filename)
+        changed = True
+        with Avatar(raw_avatar.stream) as avatar:
+            save_path = os.path.join(AppConfig.AVATAR_DIR, filename)
+            avatar.resize(100).save(save_path)
+            current_user.avatar = avatar.src
 
     if not changed:
         BlogUser(False).commit()
@@ -147,8 +149,9 @@ def signup():
         password=SaltyPassword.saltify(reg_form.password.data)
     )
 
-    with Gravatar(email=new_user.email) as fetcher:
-        new_user.avatar = fetcher.fetch(size=100).gravatar_url
+    with Avatar(AppConfig.DEFAULT_AVATAR) as avatar:
+        avatar.resize(70)
+        new_user.avatar = avatar.src
 
     BlogUser(False).add(new_user).commit()
 

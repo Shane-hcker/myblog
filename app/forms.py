@@ -89,6 +89,9 @@ class ProfileEditForm(FlaskForm):
         self.original_email = original_email
 
     def validate_avatar(self, avatar: Field):
+        if not avatar.raw_data:
+            return
+
         raw: FileStorage = avatar.raw_data[0]
         type_, ext = raw.content_type.split('/')
         if not (type_ == 'image' and ext in AppConfig.ALLOW_EXT):

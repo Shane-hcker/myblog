@@ -20,7 +20,7 @@ class UserModelTest(unittest.TestCase):
     def test_user_info(self):
         pwd = SaltyPassword.saltify('123456')
         user = BlogUser(username='user', email='useremail@example.com', password=pwd)
-        user.set_avatar(size=100, default='https://blog.miguelgrinberg.com/static/miguel.jpg')
+        user.set_avatar(size=70)
 
         self.assertTrue(user.password.is_('123456'))
 

@@ -29,7 +29,6 @@ class BuildUser:
         admin2 = BlogUser(username='shane_admin', email='bwxiang23@uwcchina.org', password=pwd)
         admin1.set_avatar(size=70)
         admin2.set_avatar(size=70)
-
         BlogUser(False).add(admin1).add(admin2)
 
         # creating random test-users
