@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 from typing import *
-from io import BufferedWriter, BufferedReader
 
 from sqlalchemy import TypeDecorator, VARCHAR
 
@@ -10,9 +9,7 @@ from app import db
 
 __all__ = [
     'SaltyVarChar', 'Column', 'ForeignKey',
-    'BufferedWriter', 'BufferedReader'
 ]
-
 
 Column = db.Column
 ForeignKey = db.ForeignKey

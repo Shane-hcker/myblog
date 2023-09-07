@@ -109,8 +109,7 @@ def profile_edit(username):
         changed = True
         with Avatar(raw_avatar.stream) as avatar:
             save_path = os.path.join(AppConfig.AVATAR_DIR, filename)
-            avatar.resize(100).save(save_path)
-            current_user.avatar = avatar.src
+            current_user.avatar = avatar.resize(70).save(save_path).src
 
     if not changed:
         BlogUser(False).commit()
@@ -151,6 +150,7 @@ def signup():
 
     with Avatar(AppConfig.DEFAULT_AVATAR) as avatar:
         avatar.resize(70)
+        avatar.save()
         new_user.avatar = avatar.src
 
     BlogUser(False).add(new_user).commit()
