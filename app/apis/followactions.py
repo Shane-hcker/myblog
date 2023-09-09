@@ -28,19 +28,19 @@ def auth_check(func):
 class UserRelationAPI(Resource, metaclass=ABCMeta):
     @abstractmethod
     @auth_check
-    def get(self, *args, **kwargs) -> None: pass
+    def get(self, *args, **kwargs): pass
 
     @abstractmethod
     @auth_check
-    def post(self, *args, **kwargs) -> None: pass
+    def post(self, *args, **kwargs): pass
 
     @staticmethod
-    def noneless_dict(d: dict) -> MutableMapping[Any, Any]:
+    def noneless_dict(d: dict):
         keys = d.keys()
         [d.pop(k) for k in keys if not d.get(k)]
         return d
 
-    def parse_valid_args(self, parser=None) -> MutableMapping[Any, Any]:
+    def parse_valid_args(self, parser=None):
         parser = parser or self.parser
         args = parser.parse_args()
         args = self.noneless_dict(args)
@@ -56,7 +56,7 @@ class UserRelationAPI(Resource, metaclass=ABCMeta):
     def error_404(self, message) -> JSONResponse:
         return {
             'status': 404,
-            'reason': 'OK', 
+            'reason': 'Not Found',
             "message": message
         }
 
@@ -72,16 +72,13 @@ class UserRelationAPI(Resource, metaclass=ABCMeta):
 class Follow(UserRelationAPI):
     @auth_check
     def get(self, username) -> MutableMapping:
-        return {
-            following_user.to_dict(followers=False, following=False)
-            for following_user in BlogUser.get_uuser(username=username).following
-        }
+        following_dict = {}
+        for following_user in BlogUser.get_uuser(username=username).following:
+            following_dict.update(following_user.to_dict(followers=False, following=False))
+        return following_dict
 
     @auth_check
-    def post(self, username) -> Any:
-        """
-        /follow/<username> POST
-        """
+    def post(self, username):
         if not (target_user := BlogUser.get_uuser(username=username)):
             return self.error_404('User not found, please retry.')
 
@@ -98,7 +95,7 @@ class Unfollow(UserRelationAPI):
         return self.error_405()
 
     @auth_check
-    def post(self, username) -> JSONResponse | Any:
+    def post(self, username):
         if not (target_user := BlogUser.get_uuser(username=username)):
             return self.error_404('User not found, please retry.')
 
@@ -112,10 +109,10 @@ class Unfollow(UserRelationAPI):
 class Followers(UserRelationAPI):
     @auth_check
     def get(self, username) -> MutableMapping:
-        return {
-            follower.to_dict(followers=False, following=False)
-            for follower in BlogUser.get_uuser(username=username).followers
-        }
+        follower_dict = {}
+        for follower in BlogUser.get_uuser(username=username).followers:
+            follower_dict.update(follower.to_dict(following=False, followers=False))
+        return follower_dict
 
     def post(self, *args, **kwargs) -> JSONResponse:
         return self.error_405()

@@ -96,7 +96,7 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
 
     def set_avatar(self, size=None, image=None) -> str:
         with Avatar(image or AppConfig.DEFAULT_AVATAR) as avatar:
-            self.avatar = avatar.resize(size or 70).src
+            self.avatar = avatar.resize(size or 70).src.rsplit('/', 1)[-1]
             return self.avatar
 
     def reset_recent_login(self):

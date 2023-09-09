@@ -105,11 +105,12 @@ def profile_edit(username):
         current_user.email = edit_form.email.data
 
     if raw_avatar := flask.request.files['avatar']:
-        filename = secure_filename(raw_avatar.filename)
         changed = True
+        filename = secure_filename(raw_avatar.filename)
         with Avatar(raw_avatar.stream) as avatar:
             save_path = os.path.join(AppConfig.AVATAR_DIR, filename)
-            current_user.avatar = avatar.resize(70).save(save_path).src
+            src = avatar.resize(70).save(save_path).src
+            current_user.avatar = src.rsplit('/', 1)[-1]
 
     if not changed:
         BlogUser(False).commit()
@@ -151,7 +152,7 @@ def signup():
     with Avatar(AppConfig.DEFAULT_AVATAR) as avatar:
         avatar.resize(70)
         avatar.save()
-        new_user.avatar = avatar.src
+        new_user.avatar = avatar.src.rsplit('/', 1)[-1]
 
     BlogUser(False).add(new_user).commit()
 

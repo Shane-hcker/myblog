@@ -31,15 +31,18 @@ class Avatar:
         return self
 
     def load_img(self, fp) -> Image:
-        return Image.open(fp if isinstance(fp, (str, bytes, pathlib.Path)) else fp.read())
+        if isinstance(fp, (str, bytes, pathlib.Path)):
+            return Image.open(fp)
+        else:
+            return Image.open(fp.read())
 
     def resize(self, size: int) -> Self:
         self.__img = self.__img.resize((size, size))
         return self
 
     @staticmethod
-    def default_avatar():
-        return AppConfig.DEFAULT_AVATAR
+    def default_avatar() -> str:
+        return AppConfig.DEFAULT_AVATAR.rsplit('/', 1)[-1]
 
     @property
     def img(self) -> Image: return self.__img
