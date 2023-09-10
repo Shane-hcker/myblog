@@ -1,10 +1,13 @@
 # -*- encoding: utf-8 -*-
+import base64
 from typing import *
 import os
 import time
 from functools import partial
 from urllib.parse import urlsplit
 import flask
+import requests
+
 
 from PIL import Image
 from werkzeug.utils import secure_filename, send_file, send_from_directory
@@ -107,10 +110,9 @@ def profile_edit(username):
     if raw_avatar := flask.request.files['avatar']:
         changed = True
         filename = secure_filename(raw_avatar.filename)
-        with Avatar(raw_avatar.stream) as avatar:
-            save_path = os.path.join(AppConfig.AVATAR_DIR, filename)
-            src = avatar.resize(70).save(save_path).src
-            current_user.avatar = src.rsplit('/', 1)[-1]
+        avatar = base64.b64encode(raw_avatar.read())
+        requests.post(f'{flask.url_for("avatar", avatar=avatar)}?username={current_user.username}')
+        current_user.avatar = filename
 
     if not changed:
         BlogUser(False).commit()

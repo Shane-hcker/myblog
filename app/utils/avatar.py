@@ -1,6 +1,9 @@
 # -*- encoding: utf-8 -*-
+import os.path
 from typing import *
-from io import BufferedReader
+
+import flask
+import requests
 import pathlib
 
 from PIL import Image
@@ -14,7 +17,7 @@ from app import AppConfig
 class Avatar:
     def __init__(self, fp):
         self.__img: Image = self.load_img(fp)
-        self.src = fp if isinstance(fp, (str, pathlib.Path)) else None
+        self.src = fp if os.path.isfile(fp) else None
 
     def __enter__(self):
         return self
@@ -24,11 +27,8 @@ class Avatar:
             raise exc_type(f'{exc_val}\n{exc_tb}')
 
     def save(self, file=None) -> Self:
-        if not (file or self.src):
-            raise TypeError(f'Either`file` or `{self}.src` should not be None')
-        self.src = file or self.src
-        self.__img.save(self.src)
-        return self
+
+        requests.post(flask.url_for('avatar', avatar=))
 
     def load_img(self, fp) -> Image:
         if isinstance(fp, (str, bytes, pathlib.Path)):
@@ -37,12 +37,15 @@ class Avatar:
             return Image.open(fp.read())
 
     def resize(self, size: int) -> Self:
-        self.__img = self.__img.resize((size, size))
+        # todo reformat avatar.py + api, switch <img> to bg
+        with Image.open(self.fp) as img:
+            img.resize((size, size)).save()
+        self.__img = self.img.resize((size, size))
         return self
 
     @staticmethod
     def default_avatar() -> str:
-        return AppConfig.DEFAULT_AVATAR.rsplit('/', 1)[-1]
+        return AppConfig.DEFAULT_AVATAR
 
     @property
     def img(self) -> Image: return self.__img

@@ -13,7 +13,7 @@
     <hr>
     <br>
 
-    <img src="{{ user.avatar }}" height="50" alt="{{ user.avatar }}">
+    <img src="{{ url_for('image', image=user.avatar) }}" height="50" alt="{{ user.username }}">
     {% if username == current_user.username %}
     {% elif current_user.is_following(user) %}
       <form action="{{ url_for('unfollow', username=username) }}" method="post">
