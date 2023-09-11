@@ -27,8 +27,8 @@ class BuildUser:
         pwd = SaltyPassword.saltify('china666')
         admin1 = BlogUser(username='admin', email='shanebilibili@outlook.com', password=pwd)
         admin2 = BlogUser(username='shane_admin', email='bwxiang23@uwcchina.org', password=pwd)
-        admin1.set_avatar(size=70)
-        admin2.set_avatar(size=70)
+        admin1.set_avatar()
+        admin2.set_avatar()
         BlogUser(False).add(admin1).add(admin2)
 
         # creating random test-users

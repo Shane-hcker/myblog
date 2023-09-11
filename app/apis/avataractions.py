@@ -7,6 +7,7 @@ from flask_restful import Resource
 from flask_restful.reqparse import RequestParser
 
 from app import AppConfig
+from app.utils.avatar import *
 
 
 __all__ = ['AvatarAPI']
@@ -24,8 +25,5 @@ class AvatarAPI(Resource):
         }
 
     def post(self, avatar: str) -> None:
-        ...
-        avatar = base64.b64decode(avatar.encode('utf-8'))
-        filename = f'../static{AppConfig.AVATAR_DIR}/{self.parser.parse_args()["username"]}.png'
-        with open(filename, 'wb') as image:
-            image.write(avatar)
+        with Avatar(raw=base64.b64decode(avatar.encode('utf-8'))) as f:
+            f.save(f'../static{AppConfig.AVATAR_DIR}/{self.parser.parse_args()["username"]}.png')

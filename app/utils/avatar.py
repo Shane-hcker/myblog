@@ -1,51 +1,42 @@
 # -*- encoding: utf-8 -*-
-import os.path
+import os
 from typing import *
-
+from PIL import Image
 import flask
 import requests
 import pathlib
 
-from PIL import Image
+from app import AppConfig
 
 
 __all__ = ['Avatar']
 
-from app import AppConfig
-
 
 class Avatar:
-    def __init__(self, fp):
-        self.__img: Image = self.load_img(fp)
-        self.src = fp if os.path.isfile(fp) else None
+    def __init__(self, *, raw=None, imgpath=None) -> None:
+        self.raw = raw
+        self.imgpath = imgpath
 
-    def __enter__(self):
+    def save(self, imgpath: str, mod_path=False) -> Self:
+        with open(imgpath, 'wb') as f:
+            f.write(self.raw or self.raw_from_path(self.imgpath))
+        if mod_path:
+            self.imgpath = imgpath
+        return self
+
+    @staticmethod
+    def default_avatar():
+        return '/default.png'
+
+    @staticmethod
+    def raw_from_path(imgpath) -> bytes:
+        with open(imgpath, 'rb') as f:
+            return f.read()
+
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type:
-            raise exc_type(f'{exc_val}\n{exc_tb}')
+            raise exc_type(f'{exc_val} at {exc_tb}')
 
-    def save(self, file=None) -> Self:
-
-        requests.post(flask.url_for('avatar', avatar=))
-
-    def load_img(self, fp) -> Image:
-        if isinstance(fp, (str, bytes, pathlib.Path)):
-            return Image.open(fp)
-        else:
-            return Image.open(fp.read())
-
-    def resize(self, size: int) -> Self:
-        # todo reformat avatar.py + api, switch <img> to bg
-        with Image.open(self.fp) as img:
-            img.resize((size, size)).save()
-        self.__img = self.img.resize((size, size))
-        return self
-
-    @staticmethod
-    def default_avatar() -> str:
-        return AppConfig.DEFAULT_AVATAR
-
-    @property
-    def img(self) -> Image: return self.__img

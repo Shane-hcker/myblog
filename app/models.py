@@ -94,9 +94,9 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
 
         return ordered_dict({keyname or self.username: user_dict})
 
-    def set_avatar(self, size=None, image=None):
-        with Avatar(image or AppConfig.DEFAULT_AVATAR) as avatar:
-            self.avatar = avatar.resize(size or 70).src.rsplit('/', 1)[-1]
+    def set_avatar(self, image=None):
+        with Avatar(imgpath=image or AppConfig.DEF_AVATAR) as avatar:
+            self.avatar = avatar.imgpath.rsplit('/', 1)[-1]
 
     def reset_recent_login(self):
         self.recent_login = current_time()

@@ -46,6 +46,13 @@
   font-weight: bold;
 }
 
+.avatar-box {
+  height: 70px;
+  width: 70px;
+  overflow: hidden;
+  border-radius: 5px;
+}
+
 .sidebar {
   width: 170px;
   border-radius: 7px;

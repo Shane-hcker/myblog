@@ -33,10 +33,11 @@ class AppConfig:
     # RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY') or 'A-VERY-LONG-SECRET-KEY'
 
     # Filing
+    # DO not use AVATAR_DIR unless sure
     MAX_CONTENT_LENGTH = content_length('32MB')
     ALLOW_EXT = {'.jpg', '.jpeg', '.png', '.webp', '.gif'}
     AVATAR_DIR = '/avatar'
-    DEFAULT_AVATAR = f"{AVATAR_DIR}/default.png"
+    ABS_AVATAR_DIR = f'/Users/xiangbowei/code/myblog/app/static{AVATAR_DIR}'
 
     # SQLAlchemy
     SQLALCHEMY_DATABASE_URI = URL.create('mysql+pymysql', host='localhost', port=3306,

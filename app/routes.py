@@ -1,24 +1,16 @@
 # -*- encoding: utf-8 -*-
-import base64
 from typing import *
-import os
 import time
+import base64
+import os
 from functools import partial
 from urllib.parse import urlsplit
 import flask
-import requests
-
-
-from PIL import Image
-from werkzeug.utils import secure_filename, send_file, send_from_directory
-from werkzeug.security import safe_join
-
 # Plugins
 from flask_login import current_user, login_user, logout_user, login_required
 
 from app import forms, app, success, fail
 from app.models import *
-
 from app.config import AppConfig
 from app.utils.check import check_valid_username
 from app.utils.saltypassword import *
@@ -26,7 +18,6 @@ from app.utils.avatar import *
 from app.utils.misc import *
 
 
-render_template = partial(flask.render_template)
 current_time = lambda: time.strftime('%Y-%m-%d %H:%M')
 
 
@@ -35,8 +26,8 @@ current_time = lambda: time.strftime('%Y-%m-%d %H:%M')
 @login_required
 def home():
     # the chosen path name for templates: templates
-    return render_template('home.html', route='Home', posts=current_user.visible_posts(),
-                           current_time=current_time(), flash_parse=flash_parse)
+    return flask.render_template('home.html', route='Home', posts=current_user.visible_posts(),
+                                 current_time=current_time(), flash_parse=flash_parse)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -46,8 +37,8 @@ def login() -> Any:
 
     # True |> POST + (validators -> true)
     if not (login_form := forms.UserLoginForm()).validate_on_submit():
-        return render_template('login.html', login_form=login_form, route='Sign In',
-                               current_time=current_time(), flash_parse=flash_parse, is_debug=app.debug)
+        return flask.render_template('login.html', login_form=login_form, route='Sign In',
+                                     current_time=current_time(), flash_parse=flash_parse, is_debug=app.debug)
 
     logged_in_user = BlogUser.get_uuser(email=login_form.email.data, username=login_form.username.data)
     if not BlogUser.is_user_valid(login_form, logged_in_user):
@@ -81,9 +72,9 @@ def login() -> Any:
 @check_valid_username
 def profile(username):
     if not (form := forms.BasicForm()).validate_on_submit():
-        return render_template('user/profile.html', flash_parse=flash_parse, username=username,
-                               current_time=current_time(), user=BlogUser.get_uuser(username=username),
-                               form=form)
+        return flask.render_template('user/profile.html', flash_parse=flash_parse, username=username,
+                                     current_time=current_time(), user=BlogUser.get_uuser(username=username),
+                                     form=form)
 
 
 @app.route('/user/<username>/profile/edit', methods=['GET', "POST"])
@@ -91,11 +82,11 @@ def profile(username):
 @check_valid_username
 def profile_edit(username):
     if username != current_user.username:
-        return render_template('errors/404.html')
+        return flask.render_template('errors/404.html')
 
     if not (edit_form := forms.ProfileEditForm(username, email := current_user.email)).validate_on_submit():
-        return render_template('user/pedit.html', edit_form=edit_form, flash_parse=flash_parse,
-                               current_time=current_time(), username=username)
+        return flask.render_template('user/pedit.html', edit_form=edit_form, flash_parse=flash_parse,
+                                     current_time=current_time(), username=username)
 
     changed = False
 
@@ -108,11 +99,10 @@ def profile_edit(username):
         current_user.email = edit_form.email.data
 
     if raw_avatar := flask.request.files['avatar']:
-        changed = True
-        filename = secure_filename(raw_avatar.filename)
-        avatar = base64.b64encode(raw_avatar.read())
-        requests.post(f'{flask.url_for("avatar", avatar=avatar)}?username={current_user.username}')
-        current_user.avatar = filename
+        with Avatar(raw=raw_avatar.read()) as avatar:
+            avatar.save(f"{AppConfig.ABS_AVATAR_DIR}{current_user.username}.png", mod_path=True)
+            current_user.avatar = '/'+avatar.imgpath.rsplit('/', 1)[-1]
+            changed = True
 
     if not changed:
         BlogUser(False).commit()
@@ -126,8 +116,8 @@ def profile_edit(username):
 @check_valid_username
 def user_posts(username):
     posts = BlogUser.get_uuser(username=username).get_user_posts()
-    return render_template('user/user_posts.html', posts=posts, username=username,
-                           current_time=current_time())
+    return flask.render_template('user/user_posts.html', posts=posts, username=username,
+                                 current_time=current_time())
 
 
 @app.route('/logout')
@@ -142,8 +132,8 @@ def signup():
         return flask.redirect(flask.url_for('home'))
 
     if not (reg_form := forms.UserRegForm()).validate_on_submit():
-        return render_template('signup.html', reg_form=reg_form, route='Sign Up', flash_parse=flash_parse,
-                               current_time=current_time())
+        return flask.render_template('signup.html', reg_form=reg_form, route='Sign Up', flash_parse=flash_parse,
+                                     current_time=current_time())
 
     new_user = BlogUser(
         email=reg_form.email.data, 
@@ -151,10 +141,8 @@ def signup():
         password=SaltyPassword.saltify(reg_form.password.data)
     )
 
-    with Avatar(AppConfig.DEFAULT_AVATAR) as avatar:
-        avatar.resize(70)
-        avatar.save()
-        new_user.avatar = avatar.src.rsplit('/', 1)[-1]
+    with Avatar(imgpath=Avatar.default_avatar()) as avatar:
+        new_user.avatar = avatar.imgpath
 
     BlogUser(False).add(new_user).commit()
 
