@@ -36,6 +36,7 @@ class AppConfig:
     # DO not use AVATAR_DIR unless sure
     MAX_CONTENT_LENGTH = content_length('32MB')
     ALLOW_EXT = {'.jpg', '.jpeg', '.png', '.webp', '.gif'}
+    ILLEGAL_CHAR = {'--', '\'', '\"'}
     AVATAR_DIR = '/avatar'
     ABS_AVATAR_DIR = f'/Users/xiangbowei/code/myblog/app/static{AVATAR_DIR}'
 

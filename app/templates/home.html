@@ -1,36 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <!-- getting flask.flash() messages -->
-  <!-- within blocks like this, var assign should follow by a `with` -->
-  {% with flash_messages = get_flashed_messages() %}
-    {% for msg in flash_parse(flash_messages) %}
-      <div class="{{ msg[0] }}" style="margin-left: 10px">{{ msg[1] }}</div>
-    {% endfor %}
-  {% endwith %}
-  <table class="post">
-    {% for post in posts %}
-      <tr>
-        <td>
-          <a href="{{ url_for('profile', username=post.poster.username) }}" title="Goto Profile">
-            <div class="avatar-box">
-              <img src="{{ url_for('static', filename='/avatar/' + post.poster.avatar) }}"
-                   style='display: block; margin: auto' width="70">
-            </div>
-          </a>
-        </td>
+  <div class="container">
+    {% with flash_messages = get_flashed_messages() %}
+      {% for msg in flash_parse(flash_messages) %}
+        <div class="{{ msg[0] }}" style="margin-left: 10px">{{ msg[1] }}</div>
+      {% endfor %}
+    {% endwith %}
 
-        <td>
-          <b>
-            {{ post.poster.username }}
-            {% if post.poster.username == current_user.username %}
-            (You)
-            {% endif %}
-          </b> at
-          <i>{{post.post_time}}</i>: <br>
-          &nbsp;&nbsp;&nbsp;&nbsp;{{post.content}}
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
+    <table class="post-display">
+      {% for post in posts %}
+        <tr class="post">
+          <td>
+            <a href="{{ url_for('profile', username=post.poster.username) }}" title="Goto Profile">
+              <div class="avatar-box">
+                <img src="{{url_for('static', filename='/avatar/' + post.poster.avatar)}}"
+                     width="70" class="avatar">
+              </div>
+            </a>
+          </td>
+          <td>
+            <div class="post-content">
+              <b>
+                {{ post.poster.username }}
+                {% if post.poster.username == current_user.username %}
+                (You)
+                {% endif %}
+              </b> at
+              <i>{{post.post_time}}</i>: <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;{{post.content}}
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
 {% endblock %}

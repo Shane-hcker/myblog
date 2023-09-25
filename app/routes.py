@@ -1,9 +1,7 @@
 # -*- encoding: utf-8 -*-
 from typing import *
 import time
-import base64
-import os
-from functools import partial
+from functools import wraps
 from urllib.parse import urlsplit
 import flask
 # Plugins
@@ -49,16 +47,14 @@ def login() -> Any:
     next_page = flask.request.args.get('next')
     if not next_page or urlsplit(next_page).netloc != '':
         next_page = flask.url_for('home')
-
     # login
     login_user(logged_in_user, remember=login_form.remember.data)
 
     logged_in_user.reset_recent_login()
 
     # display info
-    username, do_remember = login_form.username.data, login_form.remember.data
     login_time = time.strftime("%Y-%m-%d %H:%M")
-    msg = f'{username} logged in at {login_time}\tRemember: {do_remember}'
+    msg = f'You logged in at {login_time}'
 
     flask.flash(success(msg))
 
@@ -100,11 +96,11 @@ def profile_edit(username):
 
     if raw_avatar := flask.request.files['avatar']:
         with Avatar(raw=raw_avatar.read()) as avatar:
-            avatar.save(f"{AppConfig.ABS_AVATAR_DIR}{current_user.username}.png", mod_path=True)
+            avatar.save(f"{AppConfig.ABS_AVATAR_DIR}/{current_user.username}.png", mod_path=True)
             current_user.avatar = '/'+avatar.imgpath.rsplit('/', 1)[-1]
             changed = True
 
-    if not changed:
+    if changed:
         BlogUser(False).commit()
         flask.flash(success('successfully changed your profile!'))
 
@@ -135,10 +131,12 @@ def signup():
         return flask.render_template('signup.html', reg_form=reg_form, route='Sign Up', flash_parse=flash_parse,
                                      current_time=current_time())
 
+    reg_info = reg_form.userinfo
+
     new_user = BlogUser(
-        email=reg_form.email.data, 
-        username=reg_form.username.data,
-        password=SaltyPassword.saltify(reg_form.password.data)
+        email=reg_info.get('email'),
+        username=reg_info.get('username'),
+        password=SaltyPassword.saltify(reg_info.get('password'))
     )
 
     with Avatar(imgpath=Avatar.default_avatar()) as avatar:

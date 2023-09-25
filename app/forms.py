@@ -1,9 +1,10 @@
 # -*- encoding: utf-8 -*-
-import logging
 from typing import *
-
-from werkzeug.datastructures import FileStorage
+from functools import wraps
+import logging
+import os
 from dns.resolver import NoResolverConfiguration
+from werkzeug.datastructures import FileStorage
 
 from wtforms.validators import DataRequired, Length, Email, ValidationError
 from wtforms import (
@@ -16,7 +17,18 @@ from flask_wtf import FlaskForm, RecaptchaField
 from .models import BlogUser
 from .config import AppConfig
 
-__all__ = ['UserLoginForm', 'UserRegForm', 'BasicForm']
+__all__ = ['UserLoginForm', 'UserRegForm', 'BasicForm', 'ProfileEditForm', 'SearchForm']
+
+
+def check_character(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        field_data = args[-1].data
+        for char in AppConfig.ILLEGAL_CHAR:
+            if char in field_data:
+                raise ValidationError(f'Containing illegal character: {", ".join(AppConfig.ILLEGAL_CHAR)}')
+        return func(*args, **kwargs)
+    return wrapper
 
 
 class EmailValidator(Email):
@@ -37,7 +49,7 @@ class UserForm(FlaskForm):
     # recaptcha = RecaptchaField()
 
     @property
-    def general_uinfo(self) -> Dict[str, str]:
+    def userinfo(self) -> Dict[str, str]:
         return {
             'username': self.username.data,
             'email': self.email.data,
@@ -45,23 +57,36 @@ class UserForm(FlaskForm):
         }
 
 
-class BasicForm(FlaskForm): 
+class BasicForm(FlaskForm):
     submit = SubmitField()
+
+
+class SearchForm(BasicForm):
+    query = TextAreaField(label='搜索...')
 
 
 class UserLoginForm(UserForm):
     remember = BooleanField(label='Remember Me')
     login = SubmitField(label='Login')
 
+    @check_character
+    def validate_username(self, username: Field):
+        pass
+
+    @check_character
+    def validate_email(self, email: Field):
+        pass
+
+    @check_character
+    def validate_password(self, password: Field):
+        pass
+
 
 class UserRegForm(UserForm):
     confirm_password = PasswordField('Confirm your password', validators=[DataRequired()])
     register = SubmitField(label='Register')
 
-    def validate_confirm_password(self, confirm_password: Field):
-        if confirm_password.data != self.password.data:
-            raise ValidationError('Passwords do not match.')
-
+    @check_character
     def validate_username(self, username: Field):
         """
         validate_<field_name>
@@ -69,9 +94,18 @@ class UserRegForm(UserForm):
         if BlogUser.get_uuser(username=username.data):
             raise ValidationError('Username already exists, please try again with other usernames')
 
+    @check_character
     def validate_email(self, email: Field):
         if BlogUser.get_uuser(email=email.data):
             raise ValidationError('Email has been occupied or account already exists')
+
+    @check_character
+    def validate_password(self, password: Field):
+        pass
+
+    def validate_confirm_password(self, confirm_password: Field):
+        if confirm_password.data != self.password.data:
+            raise ValidationError('Passwords do not match.')
 
 
 class ProfileEditForm(FlaskForm):
@@ -93,16 +127,18 @@ class ProfileEditForm(FlaskForm):
             return
 
         raw: FileStorage = avatar.raw_data[0]
-        type_, ext = raw.content_type.split('/')
-        if not (type_ == 'image' and ext in AppConfig.ALLOW_EXT):
+        ext = os.path.splitext(raw.filename)[-1]
+        if ext not in AppConfig.ALLOW_EXT:
             raise ValidationError(f'\'{raw.filename}\' uploaded is not a picture')
 
+    @check_character
     def validate_username(self, username: Field):
         if self.original_username == username.data:
             return
         if BlogUser(False).filter_by(username=username).all():
             raise ValidationError('You need to have a unique username')
 
+    @check_character
     def validate_email(self, email: Field):
         if self.original_email == email.data:
             return

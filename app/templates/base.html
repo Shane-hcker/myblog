@@ -15,13 +15,18 @@
 </head>
 <body>
   <header class="nav">
-    <span class="tabs">
+    <div>
+      <a href="{{ url_for('home') }}">
+          Shane's Blog
+      </a>
+    </div>
+    <div>
       <a href="{{url_for('home')}}">
         Home
       </a>
-    </span>
+    </div>
 
-    <span class="tabs">
+    <div>
       {% if current_user.is_anonymous %}
         <a href="{{url_for('login')}}">
           Login
@@ -31,26 +36,21 @@
           Logout
         </a>
       {% endif %}
-    </span>
+    </div>
 
     {% if not current_user.is_anonymous%}
-    <span class="tabs">
-        <a href="{{ url_for('profile', username=current_user.username) }}">
-          User Profile
-        </a>
-      </span>
+    <div>
+      <a href="{{ url_for('profile', username=current_user.username) }}">
+        User Profile
+      </a>
+    </div>
     {% endif %}
 
-    <span class="time">
+    <div style="color: white;">
       {{current_time}}
-    </span>
+    </div>
   </header>
 
-  <div class="welcome">
-    <h1>Shane's Blog</h1>
-    <h2>Very good...</h2>
-    <hr>
-  </div>
   {% block content %}{% endblock %}
   {% block error %}{% endblock %}
 </body>

@@ -1,67 +1,78 @@
 {% extends "base.html" %}
 
 {% block content %}
+  <div class="login-box">
+    <h2>
+      Login to Your Account
+    </h2>
+    <div class="form-box">
+      <form action="" method="post" novalidate>
+        {{ login_form.hidden_tag() }}
+        <div>
+          {{ login_form.email.label(class='form-label') }}
+          {{ login_form.email(placeholder="example@example.com", class='input') }}
+
+          <!-- error output when sth is not valid -->
+          {% for error in login_form.email.errors %}
+          <br>
+          <span class="error">{{error}}</span>
+          {% endfor %}
+        </div>
+        <div>
+          {{ login_form.username.label(class='form-label') }}
+          {{ login_form.username(placeholder="Username...", class='input') }}
+
+          {% for error in login_form.username.errors %}
+          <br>
+          <span class="error">{{error}}</span>
+          {% endfor %}
+        </div>
+        <div>
+          {{ login_form.password.label(class='form-label') }}
+          {{ login_form.password(placeholder='Password...', class='input') }}
+
+          {% for error in login_form.password.errors %}
+          <br>
+          <span class="error">{{error}}</span>
+          {% endfor %}
+        </div>
+        <div style="margin-top: 20px">
+          {{ login_form.remember() }}
+          {{ login_form.remember.label }}
+        </div>
+        <div class="button-box">
+          {{ login_form.login(id='login') }}
+          {% if is_debug %}
+            <script>
+                function autofill() {
+                    let username = document.getElementById('username')
+                    let email = document.getElementById('email')
+                    let password = document.getElementById('password')
+                    email.value = 'shanebilibili@outlook.com'
+                    username.value = 'admin'
+                    password.value = 'china666'
+
+                    document.getElementById('remember').click()
+                    document.getElementById('login').click()
+                }
+            </script>
+            <button onclick="autofill()">
+              Auto Fill
+            </button>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="signup-option-box">
+    Don't have an account?
+    <a href="{{ url_for('signup') }}">Sign Up</a>
+  </div>
 <div class="form">
-  <form action='' method='post' novalidate>
-    <!-- mandatory for forms -->
-    {{ login_form.hidden_tag() }}
-    <div>
-      {{ login_form.email.label }} <br>
-      {{ login_form.email(placeholder="example@example.com", class='input') }}
-      <!-- error output when sth is not valid -->
-      {% for error in login_form.email.errors %}
-        <br>
-        <span class="error">[{{error}}]</span>
-      {% endfor %}
-    </div>
-    <div>
-      {{ login_form.username.label }} <br>
-      {{ login_form.username(placeholder="Username...", class='input') }}
-
-      {% for error in login_form.username.errors %}
-        <br>
-        <span class="error">[{{error}}]</span>
-      {% endfor %}
-    </div>
-    <div>
-      {{ login_form.password.label }} <br>
-      {{ login_form.password(placeholder='Password...', class='input') }}
-
-      {% for error in login_form.password.errors %}
-        <br>
-        <span class="error">[{{error}}]</span>
-      {% endfor %}
-    </div>
-    <div>
-      {{ login_form.remember() }}
-      {{ login_form.remember.label }}
-    </div>
-    {{ login_form.login() }}
-    {% if is_debug %}
-      <script>
-        function autofill() {
-            let username = document.getElementById('username')
-            let email = document.getElementById('email')
-            let password = document.getElementById('password')
-            email.value = 'shanebilibili@outlook.com'
-            username.value = 'admin'
-            password.value = 'china666'
-
-            document.getElementById('remember').click()
-            document.getElementById('login').click()
-        }
-      </script>
-      <button onclick="autofill()" style="margin-left: 10px">
-        Auto Fill
-      </button>
-    {% endif %}
-  </form>
-  Don't have an account?
-  <a href="{{ url_for('signup') }}">Sign Up</a>
 
   {% with get_flash = get_flashed_messages() %}
     {% for msg in flash_parse(get_flash) %}
-      <div class="{{ msg[0] }}">{{ msg[1] }}</div>
+      <div class="{{ msg[0] }}" style="font-size: 24px">{{ msg[1] }}</div>
     {% endfor %}
   {% endwith %}
 </div>

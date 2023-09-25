@@ -95,12 +95,20 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
         return ordered_dict({keyname or self.username: user_dict})
 
     def set_avatar(self, image=None):
-        with Avatar(imgpath=image or AppConfig.DEF_AVATAR) as avatar:
+        with Avatar(imgpath=image or Avatar.default_avatar()) as avatar:
             self.avatar = avatar.imgpath.rsplit('/', 1)[-1]
 
     def reset_recent_login(self):
         self.recent_login = current_time()
         self.commit()
+
+    @property
+    def following_len(self):
+        return len(self.following)
+
+    @property
+    def followers_len(self):
+        return len(self.followers)
 
     @classmethod
     def add_user(cls, *args, **kwargs) -> "BlogUser":

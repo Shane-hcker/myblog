@@ -15,6 +15,11 @@
         <td>
           {{ edit_form.avatar() }}
         </td>
+        {% for error in edit_form.avatar.errors %}
+          <td class="error">
+            {{ error }}
+          </td>
+        {% endfor %}
       </tr>
 
       <tr>
