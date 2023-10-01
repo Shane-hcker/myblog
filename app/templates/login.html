@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="login-box">
+  <div class="main-box">
     <h2>
       Login to Your Account
     </h2>
@@ -9,18 +9,8 @@
       <form action="" method="post" novalidate>
         {{ login_form.hidden_tag() }}
         <div>
-          {{ login_form.email.label(class='form-label') }}
-          {{ login_form.email(placeholder="example@example.com", class='input') }}
-
-          <!-- error output when sth is not valid -->
-          {% for error in login_form.email.errors %}
-          <br>
-          <span class="error">{{error}}</span>
-          {% endfor %}
-        </div>
-        <div>
-          {{ login_form.username.label(class='form-label') }}
-          {{ login_form.username(placeholder="Username...", class='input') }}
+          {{ login_form.username_or_email.label(class='form-label') }}
+          {{ login_form.username_or_email(placeholder="Username/Email...", class='input') }}
 
           {% for error in login_form.username.errors %}
           <br>
@@ -45,11 +35,9 @@
           {% if is_debug %}
             <script>
                 function autofill() {
-                    let username = document.getElementById('username')
-                    let email = document.getElementById('email')
+                    let u_or_p = document.getElementById('username_or_email')
                     let password = document.getElementById('password')
-                    email.value = 'shanebilibili@outlook.com'
-                    username.value = 'admin'
+                    u_or_p.value = 'shanebilibili@outlook.com'
                     password.value = 'china666'
 
                     document.getElementById('remember').click()

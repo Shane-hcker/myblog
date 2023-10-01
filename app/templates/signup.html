@@ -1,54 +1,59 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="form">
-    <form action="" method="post">
-      {{reg_form.hidden_tag()}}
-      <div>
-        {{ reg_form.email.label }} <br>
-        {{ reg_form.email(placeholder="example@example.com", class='input') }}
-        <!-- error output when sth is not valid -->
-        {% for error in reg_form.email.errors %}
-        <br>
-        <span class="error">[{{error}}]</span>
-        {% endfor %}
-      </div>
-      <div>
-        {{ reg_form.username.label }} <br>
-        {{ reg_form.username(placeholder="Username...", class='input') }}
+  <div class="main-box">
+    <h2>
+      Sign Up for An Account
+    </h2>
+    <div class="form-box">
+      <form action="" method="post">
+        {{reg_form.hidden_tag()}}
+        <div>
+          {{ reg_form.email.label(class="form-label") }}
+          {{ reg_form.email(placeholder="example@example.com", class='input') }}
+          <!-- error output when sth is not valid -->
+          {% for error in reg_form.email.errors %}
+          <br>
+          <span class="error">{{error}}</span>
+          {% endfor %}
+        </div>
+        <div>
+          {{ reg_form.username.label(class="form-label") }}
+          {{ reg_form.username(placeholder="Username...", class='input') }}
 
-        {% for error in reg_form.username.errors %}
-        <br>
-        <span class="error">[{{error}}]</span>
-        {% endfor %}
-      </div>
-      <div>
-        {{ reg_form.password.label }} <br>
-        {{ reg_form.password(placeholder='Password...', class='input') }}
+          {% for error in reg_form.username.errors %}
+          <br>
+          <span class="error">{{error}}</span>
+          {% endfor %}
+        </div>
+        <div>
+          {{ reg_form.password.label(class="form-label") }}
+          {{ reg_form.password(placeholder='Password...', class='input') }}
 
-        {% for error in reg_form.password.errors %}
-        <br>
-        <span class="error">[{{error}}]</span>
-        {% endfor %}
-      </div>
-      <div>
-        {{ reg_form.confirm_password.label }} <br>
-        {{ reg_form.confirm_password(placeholder='Confirm Your Password', class='input') }}
+          {% for error in reg_form.password.errors %}
+          <br>
+          <span class="error">{{error}}</span>
+          {% endfor %}
+        </div>
+        <div>
+          {{ reg_form.confirm_password.label(class="form-label") }}
+          {{ reg_form.confirm_password(placeholder='Confirm Your Password', class='input') }}
 
-        {% for error in reg_form.confirm_password.errors %}
-        <br>
-        <span class="error">[{{error}}]</span>
-        {% endfor %}
-      </div>
+          {% for error in reg_form.confirm_password.errors %}
+          <br>
+          <span class="error">{{error}}</span>
+          {% endfor %}
+        </div>
+        <div class="button-box">
+          {{ reg_form.register(id="register") }}
+        </div>
 
-      {{ reg_form.register() }}
-
-<!--     error handling -->
-      {% with messages = get_flashed_messages() %}
-        {% for msg in flash_parse(messages) %}
-          <div class="{{ msg[0] }}">{{ msg[1] }}</div>
-        {% endfor %}
-      {% endwith %}
+  <!--     error handling -->
+        {% with messages = get_flashed_messages() %}
+          {% for msg in flash_parse(messages) %}
+            <div class="{{ msg[0] }}" style="font-size: 24px">{{ msg[1] }}</div>
+          {% endfor %}
+        {% endwith %}
     </form>
   </div>
 {% endblock %}

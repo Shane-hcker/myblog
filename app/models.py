@@ -176,7 +176,8 @@ class BlogUser(UserMixin, DBMixin, db.Model):  # One
 
     @staticmethod
     def is_user_valid(form: FlaskForm, user: "BlogUser") -> bool:
-        return user and user.password.isHashOf(form.password.data) and user.email == form.email.data.strip()
+        return (user and user.password.isHashOf(form.password.data) and
+                (user.email == form.username_or_email.data or user.username == form.username_or_email.data))
 
     @staticmethod
     def __parse_post(post: "Posts") -> Dict[str, str]:

@@ -1,4 +1,4 @@
-{% extends "user/base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
   <div class="userinfo">
@@ -39,5 +39,49 @@
     <br>
     <strong>Recent login: </strong>
     {{ user.recent_login }}
+
+    <div class="user-container">
+      <div class="profile-nav">
+        <a href="">
+          <div class="profile-nav-item">
+            My Profile
+          </div>
+        </a>
+
+        <a href="">
+          <div class="profile-nav-item">
+            Posts
+          </div>
+        </a>
+
+        <a href="">
+          <div class="profile-nav-item">
+            Edit
+          </div>
+        </a>
+
+        <a href="">
+          <div class="profile-nav-item">
+            Account Security
+          </div>
+        </a>
+      </div>
+
+      <div class="profile-content">
+        <h1>
+          Admin
+        </h1>
+        <hr>
+
+        <div class="profile-detail">
+          <p>
+            fucfcewcewwd
+          </p>
+          <p>
+            dwadwadwa
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 {% endblock %}

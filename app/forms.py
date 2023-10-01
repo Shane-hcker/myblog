@@ -66,6 +66,8 @@ class SearchForm(BasicForm):
 
 
 class UserLoginForm(UserForm):
+    username = email = None
+    username_or_email = StringField('Your Username/Email...', validators=[DataRequired()])
     remember = BooleanField(label='Remember Me')
     login = SubmitField(label='Login')
 

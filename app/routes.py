@@ -15,7 +15,6 @@ from app.utils.saltypassword import *
 from app.utils.avatar import *
 from app.utils.misc import *
 
-
 current_time = lambda: time.strftime('%Y-%m-%d %H:%M')
 
 
@@ -38,7 +37,9 @@ def login() -> Any:
         return flask.render_template('login.html', login_form=login_form, route='Sign In',
                                      current_time=current_time(), flash_parse=flash_parse, is_debug=app.debug)
 
-    logged_in_user = BlogUser.get_uuser(email=login_form.email.data, username=login_form.username.data)
+    logged_in_user = BlogUser.get_uuser(username=login_form.username_or_email.data) or \
+        BlogUser.get_uuser(email=login_form.username_or_email.data)
+
     if not BlogUser.is_user_valid(login_form, logged_in_user):
         flask.flash(fail('Invalid username or password'))
         return flask.redirect(flask.url_for('login'))
@@ -97,7 +98,7 @@ def profile_edit(username):
     if raw_avatar := flask.request.files['avatar']:
         with Avatar(raw=raw_avatar.read()) as avatar:
             avatar.save(f"{AppConfig.ABS_AVATAR_DIR}/{current_user.username}.png", mod_path=True)
-            current_user.avatar = '/'+avatar.imgpath.rsplit('/', 1)[-1]
+            current_user.avatar = '/' + avatar.imgpath.rsplit('/', 1)[-1]
             changed = True
 
     if changed:

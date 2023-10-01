@@ -1,117 +1,38 @@
-* {
-  margin: 0;
-  padding: 0;
+/* Profile Page */
+.user-container {
+  display: flex;
+  overflow: hidden;
+  margin: 100px auto;
+  width: 65%;
+  min-height: 500px;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, .95);
+  box-shadow: rgba(102, 102, 102, .3) 15px 15px 30px;
 }
 
-.nav {
-  height: 25px;
-  margin-left: 10px;
+.profile-nav {
+  height: 100%;
+  flex: 200px;
+}
+
+.profile-nav > a {
+  text-decoration: none;
+  color: #000;
+}
+
+.profile-nav-item {
+  padding: 10px 15px 10px 10px;
+  border-bottom: rgba(105, 105, 105, .5) solid 1px;
+  border-collapse: collapse;
+}
+
+.profile-content {
+  height: 100%;
+  width: 100%;
+  padding: 15px 25px 25px;
+}
+
+.profile-detail {
   margin-top: 10px;
 }
 
-.tabs {
-  width: 400px;
-  height: 125px;
-  padding: 5px 5px 5px 5px;
-  border-radius: 5px;
-  background-color: dodgerblue;
-  margin-right: 10px;
-}
-
-.tabs a {
-  text-decoration: none;
-  text-align: center;
-  color: white;
-}
-
-.box {
-  margin: 100px auto;
-  width: 1200px;
-  height: 550px;
-}
-
-.box > div {
-  display: inline-block;
-  height: 100%;
-  overflow: hidden;
-  background-color: ghostwhite;
-}
-
-.tab {
-  color: black;
-  text-decoration: none;
-}
-
-.tab:hover {
-  font-weight: bold;
-}
-
-.avatar-box {
-  height: 70px;
-  width: 70px;
-  overflow: hidden;
-  border-radius: 5px;
-}
-
-.sidebar {
-  width: 170px;
-  border-radius: 7px;
-  box-shadow: 6px 0 15px rgb(0, 0, 0, .5);
-}
-
-.sidebar, .content {
-  overflow: hidden;
-  height: 100%;
-}
-
-.tab > div {
-  padding-left: 10px;
-  padding-top: 10px;
-  font-size: 15px;
-  height: 25px;
-  width: 100%;
-  border-bottom: 2px solid grey;
-}
-
-.error, .success {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 16px;
-}
-
-.error {
-  color: red;
-}
-
-.success {
-  color: green;
-}
-
-.content {
-  width: 950px;
-  margin-left: 30px;
-}
-
-.button-following {
-  background-color: dodgerblue;
-  margin-top: 5px;
-  height: 25px;
-  width: 70px;
-  border: none;
-  border-radius: 3px;
-
-  font-size: 15px;
-  text-align: center;
-  color: white;
-}
-
-.button-following:hover {
-  background: deepskyblue;
-}
-
-.my_posts {
-  margin-top: 18px;
-}
-
-.edit_label {
-  font-weight: bold;
-}
