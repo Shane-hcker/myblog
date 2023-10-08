@@ -32,7 +32,39 @@
   padding: 15px 25px 25px;
 }
 
+.profile-content-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
 .profile-detail {
   margin-top: 10px;
+}
+
+.button-following {
+  margin-left: auto;
+}
+
+.button-following input {
+  width: 120px;
+  height: 40px;
+  border-radius: 5px;
+  border: none;
+  background-color: #588cf0;
+  color: white;
+  font-size: 15px;
+}
+
+.button-following input:hover {
+  background-color: #3a75f0;
+}
+
+.button-following input:active {
+  background-color: #2c5be6;
+}
+
+.profile-detail strong, .profile-detail br {
+  line-height: 30px;
 }
 

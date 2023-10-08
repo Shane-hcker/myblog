@@ -1,86 +1,77 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="userinfo">
-
-    &nbsp;&nbsp;
-    {% if username == current_user.username %}
-      <h1>My Profile:&nbsp;</h1>
-    {% else %}
-      <h1>{{ username }}'s Profile: </h1>
-    {% endif %}
-
-    <hr>
-    <br>
-    <div class="avatar-box">
-      <img src="{{ url_for('static', filename='/avatar/'+user.avatar) }}" width="70" alt="{{ user.username }}">
-    </div>
-    {% if username == current_user.username %}
-    {% elif current_user.is_following(user) %}
-      <form action="{{ url_for('unfollow', username=username) }}" method="post">
-        {{ form.hidden_tag() }}
-        {{ form.submit(value='unfollow', class='button-following') }}
-      </form>
-    {% else %}
-      <form action="{{ url_for('follow', username=username) }}" method="post">
-        {{ form.hidden_tag() }}
-        {{ form.submit(value='follow', class='button-following') }}
-      </form>
-    {% endif %}
-
-    <br>
-    <strong>Followers: </strong>{{ user.followers_len }}
-    &nbsp;&nbsp;&nbsp;
-    <strong>Following: </strong>{{ user.following_len }}
-    <br>
-    <strong>Username: </strong>{{ username }}
-    <br>
-    <strong>Email: </strong>{{ user.email }}
-    <br>
-    <strong>Recent login: </strong>
-    {{ user.recent_login }}
-
-    <div class="user-container">
-      <div class="profile-nav">
-        <a href="">
-          <div class="profile-nav-item">
-            My Profile
-          </div>
-        </a>
-
-        <a href="">
-          <div class="profile-nav-item">
-            Posts
-          </div>
-        </a>
-
-        <a href="">
-          <div class="profile-nav-item">
-            Edit
-          </div>
-        </a>
-
-        <a href="">
-          <div class="profile-nav-item">
-            Account Security
-          </div>
-        </a>
-      </div>
-
-      <div class="profile-content">
-        <h1>
-          Admin
-        </h1>
-        <hr>
-
-        <div class="profile-detail">
-          <p>
-            fucfcewcewwd
-          </p>
-          <p>
-            dwadwadwa
-          </p>
+  <div class="user-container">
+    <div class="profile-nav">
+      <a href="">
+        <div class="profile-nav-item">
+          My Profile
         </div>
+      </a>
+
+      <a href="">
+        <div class="profile-nav-item">
+          Posts
+        </div>
+      </a>
+
+      <a href="">
+        <div class="profile-nav-item">
+          Edit
+        </div>
+      </a>
+
+      <a href="">
+        <div class="profile-nav-item">
+          Account Security
+        </div>
+      </a>
+    </div>
+
+    <div class="profile-content">
+      <div class="profile-content-header">
+        <div class="avatar">
+          <img src="{{ url_for('static', filename='/avatar/'+user.avatar) }}" width="70" alt="{{ user.username }}">
+        </div>
+        <div style="margin-left: 10px">
+          <h3>
+            {{ username }}
+          </h3>
+          {% if username == 'admin' %}
+            God of All
+          {% else %}
+            User #{{user.id}}
+          {% endif %}
+        </div>
+
+        <div class="button-following">
+          {% if username == current_user.username %}
+          {% elif current_user.is_following(user) %}
+          <form action="{{ url_for('unfollow', username=username) }}" method="post">
+            <!--              {{ form.hidden_tag() }}-->
+            {{ form.submit(value='unfollow') }}
+          </form>
+          {% else %}
+          <form action="{{ url_for('follow', username=username) }}" method="post">
+            <!--              {{ form.hidden_tag() }}-->
+            {{ form.submit(value='follow') }}
+          </form>
+          {% endif %}
+        </div>
+
+      </div>
+      <div class="profile-detail">
+        <br>
+        <strong>Followers: </strong>{{ user.followers_len }}
+        &nbsp;&nbsp;&nbsp;
+        <strong>Following: </strong>{{ user.following_len }}
+        <br>
+        <strong>Username: </strong>{{ username }}
+        <br>
+        <strong>Email: </strong>{{ user.email }}
+        <br>
+        <strong>Recent login: </strong>
+        {{ user.recent_login }}
       </div>
     </div>
   </div>
