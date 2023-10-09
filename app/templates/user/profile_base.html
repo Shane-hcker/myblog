@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="profile-box">
+  <div class="profile-nav">
+    <a href="{{ url_for('profile', username=username) }}">
+      <div class="profile-nav-item">
+        My Profile
+      </div>
+    </a>
+
+    <a href="{{ url_for('user_posts', username=username) }}">
+      <div class="profile-nav-item">
+        Posts
+      </div>
+    </a>
+
+    <a href="{{ url_for('profile_edit', username=username) }}">
+      <div class="profile-nav-item">
+        Edit
+      </div>
+    </a>
+
+    <a href="#">
+      <div class="profile-nav-item">
+        Account Security
+      </div>
+    </a>
+  </div>
+  {% block tab %}{% endblock tab %}
+</div>
+{% endblock %}

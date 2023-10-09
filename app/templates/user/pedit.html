@@ -1,10 +1,7 @@
-{% extends "base.html" %}
+{% extends "user/profile_base.html" %}
 
-{% block content %}
-  <h1>
-    Profile Editing
-  </h1>
-  <hr>
+{% block tab %}
+<div class="edit-box">
   <form action="" method="post" enctype=multipart/form-data>
     {{ edit_form.hidden_tag() }}
     <table class="pedit">
@@ -61,4 +58,5 @@
       </tr>
     </table>
   </form>
+</div>
 {% endblock %}

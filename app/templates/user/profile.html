@@ -1,33 +1,6 @@
-{% extends "base.html" %}
+{% extends "user/profile_base.html" %}
 
-{% block content %}
-  <div class="user-container">
-    <div class="profile-nav">
-      <a href="">
-        <div class="profile-nav-item">
-          My Profile
-        </div>
-      </a>
-
-      <a href="">
-        <div class="profile-nav-item">
-          Posts
-        </div>
-      </a>
-
-      <a href="">
-        <div class="profile-nav-item">
-          Edit
-        </div>
-      </a>
-
-      <a href="">
-        <div class="profile-nav-item">
-          Account Security
-        </div>
-      </a>
-    </div>
-
+{% block tab %}
     <div class="profile-content">
       <div class="profile-content-header">
         <div class="avatar">
@@ -66,13 +39,9 @@
         &nbsp;&nbsp;&nbsp;
         <strong>Following: </strong>{{ user.following_len }}
         <br>
-        <strong>Username: </strong>{{ username }}
-        <br>
         <strong>Email: </strong>{{ user.email }}
         <br>
-        <strong>Recent login: </strong>
-        {{ user.recent_login }}
+        <strong>Ta's description: </strong>
       </div>
     </div>
-  </div>
 {% endblock %}

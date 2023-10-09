@@ -1,5 +1,5 @@
 /* Profile Page */
-.user-container {
+.profile-box {
   display: flex;
   overflow: hidden;
   margin: 100px auto;
@@ -66,5 +66,11 @@
 
 .profile-detail strong, .profile-detail br {
   line-height: 30px;
+}
+
+.edit-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
 }
 
