@@ -2,6 +2,10 @@
 
 {% block tab %}
 <div class="edit-box">
+  <h2>
+    Edit My User Profile
+  </h2>
+
   <form action="" method="post" enctype=multipart/form-data>
     {{ edit_form.hidden_tag() }}
     <table class="pedit">
@@ -24,7 +28,7 @@
           {{ edit_form.username.label }}
         </td>
         <td>
-          {{ edit_form.username(value=current_user.username) }}
+          {{ edit_form.username(value=current_user.username, class="edit_input") }}
         </td>
         {% for error in edit_form.username.errors %}
         <td class="error">
@@ -38,7 +42,7 @@
           {{ edit_form.email.label }}
         </td>
         <td>
-          {{ edit_form.email(value=current_user.email) }}
+          {{ edit_form.email(value=current_user.email, class="edit_input") }}
         </td>
         {% for error in edit_form.email.errors %}
         <td class="error">
@@ -48,7 +52,7 @@
       </tr>
       <tr>
         <td colspan="2">
-          {{ edit_form.submit() }}
+          {{ edit_form.submit(class='pedit-button') }}
         </td>
         {% with messages = get_flashed_messages() %}
           {% for msg in flash_parse(messages) %}
