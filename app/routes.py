@@ -54,10 +54,7 @@ def login() -> Any:
     logged_in_user.reset_recent_login()
 
     # display info
-    login_time = time.strftime("%Y-%m-%d %H:%M")
-    msg = f'You logged in at {login_time}'
-
-    flask.flash(success(msg))
+    flask.flash(success(f'Welcome, {logged_in_user.username}'))
 
     # flask.url_for() -> prevent future route change
     # url_for refers to the func that covers the template

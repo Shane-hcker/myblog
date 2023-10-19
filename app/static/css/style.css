@@ -13,11 +13,11 @@ body {
   width: 100%;
   background-color: rgba(0, 0, 0, .5);
   height: 45px;
+  display: flex;
   box-shadow: rgba(102, 102, 102, .4) 0 15px 30px;
 }
 
 .nav > div {
-  display: inline-block;
   height: 30px;
   padding-top: 15px;
   padding-right: 10px;
