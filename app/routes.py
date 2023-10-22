@@ -22,10 +22,11 @@ current_time = lambda: time.strftime('%Y-%m-%d %H:%M')
 @app.route('/home')
 @login_required
 def home():
-    if not (search_form := forms.SearchForm()):
+    if (search_form := forms.SearchForm()).validate_on_submit():
+        pass
     # the chosen path name for templates: templates
     return flask.render_template('home.html', route='Home', posts=current_user.visible_posts(),
-                                 current_time=current_time(), flash_parse=flash_parse)
+                                 current_time=current_time(), flash_parse=flash_parse, search_form=search_form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
