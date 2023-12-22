@@ -66,6 +66,7 @@ def login() -> Any:
 @app.route('/search', methods=['GET', 'POST'])
 @login_required
 def search(query):
+    pass
 
 
 @app.route('/user/<username>/profile')
